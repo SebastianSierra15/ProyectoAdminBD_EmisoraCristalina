@@ -1,13 +1,15 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
+using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 
 namespace ProyectoAdmin_EmisoraCristalina.Data
 {
 
     public class Conexion
     {
-        protected MySqlConnection? connection;
-
+        protected MySqlConnection connection;
+        
         protected void Conectar()
         {
             try
@@ -32,5 +34,6 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
                 Console.WriteLine(e.ToString());
             }
         }
+
     }
 }
