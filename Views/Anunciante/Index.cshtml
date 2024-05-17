@@ -91,7 +91,7 @@
 
                             <div class="col">
                                 <label for="documento" class="form-label"><strong>Número de documento</strong></label>
-                                <input type="text" class="form-control" id="documento" name="documento" readonly>
+                                <input type="number" class="form-control" id="documento" name="documento" readonly>
                             </div>
                         </div>
 
@@ -277,7 +277,7 @@
     var inputNombre1 = document.getElementById('nombre1');
     var inputNombre2 = document.getElementById('nombre2');
     var inputApellido1 = document.getElementById('apellido1');
-    var selectApellido2 = document.getElementById('apellido2');
+    var inputApellido2 = document.getElementById('apellido2');
     var inputFecha = document.getElementById('fecha');
     var inputCorreo = document.getElementById('correo');
     var inputGenero = document.getElementById('genero');
@@ -313,7 +313,7 @@
         inputNombre1.value = anunciante.persona.nombre1;
         inputNombre2.value = anunciante.persona.nombre2;
         inputApellido1.value = anunciante.persona.apellido1;
-        selectApellido2.value = anunciante.persona.apellido2;
+        inputApellido2.value = anunciante.persona.apellido2;
         inputCorreo.value = anunciante.persona.correo;
         inputGenero.value = anunciante.persona.genero.nombre;
 

@@ -33,7 +33,7 @@ namespace ProyectoAdmin_EmisoraCristalina.Controllers
         [HttpPost]
         public ActionResult Editar(string nit, string nombre, string direccion, string telefono, string nombre1, string nombre2, string apellido1, string apellido2, string correo)
         {
-            cn.EditarAnunciante(nit, nombre, direccion, telefono, nombre1, nombre2, apellido1, apellido2, correo);
+            cn.EditarAnunciante(nit, nombre, direccion.ToUpper(), telefono, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo);
 
             return RedirectToAction("Index", "Anunciante");
         }
