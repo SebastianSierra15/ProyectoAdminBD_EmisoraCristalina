@@ -1,0 +1,221 @@
+﻿@{
+    ViewData["Title"] = "Contrato";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center" style="margin-top: 100px;">Contrato Nuevo</h1>
+
+<div class="container text-center mt-5">
+    <form id="edit" action="@Url.Action("Crear", "Contrato")" method="post">
+        <div class="row">
+            <div class="col">
+                <label for="nombre" class="form-label"><strong>Nombre del contrato</strong></label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="fechaInicio" class="form-label"><strong>Fecha de inicio del contrato</strong></label>
+                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+            </div>
+
+            <div class="col">
+                <label for="fechaFin" class="form-label"><strong>Fecha de terminación del contrato</strong></label>
+                <input type="date" class="form-control" id="fechaFin" name="fechaFin" required disabled>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="anunciante" class="form-label"><strong>Anunciante</strong></label>
+                <select class="form-select" id="anunciante" name="anunciante" required>
+                    @foreach (AnuncianteModel anunciante in ViewBag.anunciantes)
+                    {
+                        <option value="@anunciante.Nit">@anunciante.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col">
+                <label for="valor" class="form-label"><strong>Costo final del contrato</strong></label>
+                <input type="number" class="form-control" id="valor" name="valor" readonly>
+            </div>
+        </div>
+
+        <div class="text-center row mt-5">
+            <button id="btnCrearCunia" type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#agregar" disabled>Agregar Cuña</button>
+        </div>
+
+        <div class="row mt-3">
+            <table class="table table-hover table-bordered table-responsive mt-4" id="tabla">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Nombre</th>
+                        <th scope="col" class="text-center">Descripción</th>
+                        <th scope="col" class="text-center">Tarifa</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<div class="text-center mt-5">
+    <button id="btnCrear" class="btn btn-outline-primary mt-3" form="edit" type="submit">
+        Crear
+    </button>
+</div>
+
+<div class="modal fade" id="agregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5 text-center">
+                    Cuña
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="crear">
+                        <div class="row">
+                            <div class="col">
+                                <label for="nombreCunia" class="form-label"><strong>Nombre</strong></label>
+                                <input type="text" class="form-control" id="nombreCunia" name="nombreCunia" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label for="descripcionCunia" class="form-label"><strong>Descripción</strong></label>
+                                <textarea type="text" class="form-control" id="descripcionCunia" name="descripcionCunia" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label for="tarifa" class="form-label"><strong>Tarifa</strong></label>
+                                <select class="form-select" id="tarifa" name="tarifa" required>
+                                    @foreach (TarifaModel tarifa in ViewBag.tarifas)
+                                    {
+                                        <option value="@tarifa.Id">@tarifa.Programa.Nombre $@tarifa.ValorEspecial (@tarifa.RangoInicial sg - @tarifa.RangoFinal sg)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="validarYAgregarCunia()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var tabla = document.querySelector('#tabla tbody');
+    var valor = 0;
+    var inputValor = document.getElementById('valor');
+    var inputFechaInicio = document.getElementById('fechaInicio');
+    var inputFechaFin = document.getElementById('fechaFin');
+    var btnCrearCunia = document.getElementById('btnCrearCunia');
+
+    var fechaActual = new Date();
+    fechaActual.setDate(fechaActual.getDate() + 1);
+    var fechaActualISO = fechaActual.toISOString().split('T')[0];
+    inputFechaInicio.min = fechaActualISO;
+    inputFechaInicio.addEventListener('change', filtrarFechaFin);
+    inputFechaFin.addEventListener('change', desactivar);
+    var dias = 0;
+
+    function validarYAgregarCunia() {
+        const nombre = document.getElementById('nombreCunia').value;
+        const descripcion = document.getElementById('descripcionCunia').value;
+        const tarifa = document.getElementById('tarifa').value;
+
+        if (!nombre || !descripcion || !tarifa) {
+            alert("Por favor, complete todos los campos requeridos.");
+            return;
+        }
+
+        buscarTarifa(tarifa);
+    }
+
+    function agregarCunia(result) {
+        valor += result.valorEspecial * dias;
+        inputValor.value = valor + "";
+
+        const nombre = document.getElementById('nombreCunia').value;
+        const descripcion = document.getElementById('descripcionCunia').value;
+        const fila = `<tr>
+            <td scope="row">${nombre}</td>
+            <td>${descripcion}</td>
+            <td>${result.programa.nombre} $${result.valorEspecial} (${result.rangoInicial}sg - ${result.rangoFinal}sg)</td>
+            <input type="hidden" name="cunia[][nombre]" value="${nombre}"/>
+            <input type="hidden" name="cunia[][descripcion]" value="${descripcion}"/>
+            <input type="hidden" name="cunia[][tarifa]" value="${result.id}"/>
+        <tr>`;
+
+        tabla.insertAdjacentHTML('beforeend', fila)
+        document.getElementById('crear').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('agregar'));
+        modal.hide();
+    }
+
+    function filtrarFechaFin() {
+        var fechaSeleccionada = inputFechaInicio.value;
+        inputFechaInicio.disabled = true;
+        inputFechaFin.disabled = false;
+
+        var fechaNueva = new Date(fechaSeleccionada);
+        fechaNueva.setDate(fechaNueva.getDate() + 30);
+        var nuevaFecha = fechaNueva.toISOString().slice(0, 10);
+
+        inputFechaFin.min = nuevaFecha;
+    }
+
+    function desactivar() {
+        inputFechaFin.disabled = true;
+        btnCrearCunia.disabled = false;
+
+        var fechaInicioDate = new Date(fechaInicio.value);
+        var fechaFinDate = new Date(fechaFin.value);
+        var diferenciaEnMilisegundos = fechaFinDate - fechaInicioDate;
+        var milisegundosEnUnDia = 1000 * 60 * 60 * 24;
+        dias = diferenciaEnMilisegundos / milisegundosEnUnDia;
+        dias = Math.round(dias);
+        console.log(dias);
+    }
+
+    document.getElementById('btnCrear').addEventListener('click', function (event) {
+        const filas = tabla.getElementsByTagName('tr');
+        if (filas.length === 0) {
+            event.preventDefault();
+            alert("Debe agregar al menos una cuña antes de enviar el formulario.");
+        }
+    });
+
+    function buscarTarifa(id) {
+        $.ajax({
+            url: "@Url.Action("BuscarTarifa", "Contrato")",
+            type: "POST",
+            traditional: true,
+            data: { id: id },
+            success: function (result) {
+                agregarCunia(result);
+            },
+            error: function (xhr, status, error) {
+                console.log("error");
+                console.error(error);
+            }
+        });
+    }
+
+</script>
+                                       

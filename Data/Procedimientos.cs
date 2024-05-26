@@ -354,6 +354,96 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
             return vendedores;
         }
 
+        public List<CuniaModel> RecopilarCunias(string idContrato)
+        {
+            List<CuniaModel> cunias = new List<CuniaModel>();
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("RecopilarCunias", connection);
+                cmd.Parameters.AddWithValue("idContrato", idContrato);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    cunias.Add(new CuniaModel()
+                    {
+                        Id = Convert.ToInt32(dr[0] + ""),
+                        Nombre = dr[1] + "",
+                        Descripcion = dr[2] + "",
+                        Estado = ((dr[3] + "" == "1") ? true : false),
+                        Tarifa = new TarifaModel()
+                        {
+                            Id = Convert.ToInt32(dr[4] + ""),
+                            ValorPublicado = Convert.ToInt32(dr[5] + ""),
+                            ValorEspecial = Convert.ToInt32(dr[6] + ""),
+                            RangoInicial = Convert.ToInt32(dr[7] + ""),
+                            RangoFinal = Convert.ToInt32(dr[8] + ""),
+                            Programa = new ProgramaModel()
+                            {
+                                Id = Convert.ToInt32(dr[9] + ""),
+                                Nombre = dr[10] + "",
+                                Estado = ((dr[11] + "" == "1") ? true : false)
+                            }
+                        }
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return cunias;
+        }
+
+        public List<ContratoModel> RecopilarContratos()
+        {
+            List<ContratoModel> contratos = new List<ContratoModel>();
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("RecopilarContratos", connection);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    contratos.Add(new ContratoModel()
+                    {
+                        Id = Convert.ToInt32(dr[0] + ""),
+                        Nombre = dr[1] + "",
+                        FechaInicio = dr[2] + "",
+                        FechaFin = dr[3] + "",
+                        FechaCreacion = dr[4] + "",
+                        Valor = Convert.ToInt32(dr[5] + ""),
+                        DocumentoVendedor = Convert.ToInt32(dr[6] + ""),
+                        NombreVendedor = dr[7] + "",
+                        DocumentoAnunciante = Convert.ToInt32(dr[8] + ""),
+                        NombreAnunciante = dr[9] + "",
+                        Cunias = RecopilarCunias(dr[0] + "")
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return contratos;
+        }
+
         public AnuncianteModel BuscarAnunciante(string nit)
         {
             AnuncianteModel anunciante = new AnuncianteModel();
@@ -466,6 +556,45 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
             }
 
             return vendedor;
+        }
+
+        public TarifaModel BuscarTarifa(string id)
+        {
+            TarifaModel tarifa = new TarifaModel();
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("BuscarTarifa", connection);
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    tarifa.Id = Convert.ToInt32(dr[0] + "");
+                    tarifa.ValorPublicado = Convert.ToInt32(dr[1] + "");
+                    tarifa.ValorEspecial = Convert.ToInt32(dr[2] + "");
+                    tarifa.RangoInicial = Convert.ToInt32(dr[3] + "");
+                    tarifa.RangoFinal = Convert.ToInt32(dr[4] + "");
+                    tarifa.Programa = new ProgramaModel()
+                    {
+                        Id = Convert.ToInt32(dr[5] + ""),
+                        Nombre = dr[6] + "",
+                        Estado = ((dr[7] + "" == "1") ? true : false)
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return tarifa;
         }
 
         public void AgregarPrograma(string nombre)

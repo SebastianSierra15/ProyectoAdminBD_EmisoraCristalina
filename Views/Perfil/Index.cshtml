@@ -1,5 +1,77 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h1 class="text-center" style="margin-top: 100px;">Perfil</h1>
+
+<div class="container text-center mt-5">
+    <form id="edit" action="@Url.Action("Editar", "Perfil")" method="post">
+        <div class="row">
+            <div class="col">
+                <input id="id" name="id" value="" hidden />
+                <input id="rol" name="rol" value="" hidden />
+                <input id="estado" name="estado" value="" hidden />
+                <label for="tipoDocumento" class="form-label"><strong>Tipo de documento</strong></label>
+                <input type="text" class="form-control" id="tipoDocumento" name="tipoDocumento" readonly>
+            </div>
+
+            <div class="col">
+                <label for="documento" class="form-label"><strong>Número de documento</strong></label>
+                <input type="number" class="form-control" id="documento" name="documento" readonly>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="nombre1" class="form-label"><strong>Primer nombre</strong></label>
+                <input type="text" class="form-control" id="nombre1" name="nombre1" required>
+            </div>
+
+            <div class="col">
+                <label for="nombre2" class="form-label"><strong>Segundo nombre</strong></label>
+                <input type="text" class="form-control" id="nombre2" name="nombre2">
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="apellido1" class="form-label"><strong>Primer apellido</strong></label>
+                <input type="text" class="form-control" id="apellido1" name="apellido1" required>
+            </div>
+
+            <div class="col">
+                <label for="apellido2" class="form-label"><strong>Segundo apellido</strong></label>
+                <input type="text" class="form-control" id="apellido2" name="apellido2">
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="fecha" class="form-label"><strong>Fecha de nacimiento</strong></label>
+                <input type="text" class="form-control" id="fecha" name="fecha" readonly>
+            </div>
+
+            <div class="col">
+                <label for="correo" class="form-label"><strong>Correo</strong></label>
+                <input type="text" class="form-control" id="correo" name="correo" required>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <label for="username" class="form-label"><strong>Username</strong></label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+
+            <div class="col">
+                <label for="genero" class="form-label"><strong>Género</strong></label>
+                <input type="text" class="form-control" id="genero" name="genero" readonly>
+            </div>
+        </div>
+    </form>
+
+    <button class="btn btn-outline-primary mt-3" form="edit" type="submit">
+        Guardar
+    </button>
+</div>
