@@ -1,22 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoAdmin_EmisoraCristalina.Data;
 using ProyectoAdmin_EmisoraCristalina.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ProyectoAdmin_EmisoraCristalina.Controllers
 {
+    [Authorize]
     public class PerfilController : Controller
     {
         Procedimientos cn = new Procedimientos();
 
         public IActionResult Index()
         {
-            return View();
+            var user = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+
+            VendedorModel vendedor = cn.BuscarVendedor(user + "");
+
+            return View(vendedor);
         }
 
         [HttpPost]
-        public ActionResult Editar(string id, string username, string estado, string rol, string nombre1, string nombre2, string apellido1, string apellido2, string correo)
+        public ActionResult Editar(string id, string username, string nombre1, string nombre2, string apellido1, string apellido2, string correo, string contrasenia)
         {
-            cn.EditarVendedor(id, username, estado, rol, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo);
+            cn.EditarPerfil(id, username, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo, contrasenia);
 
             return RedirectToAction("Index", "Home");
         }

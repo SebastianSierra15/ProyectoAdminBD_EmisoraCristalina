@@ -5,6 +5,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Transactions;
 using ProyectoAdmin_EmisoraCristalina.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics.Contracts;
 
 namespace ProyectoAdmin_EmisoraCristalina.Data
 {
@@ -47,7 +48,8 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
                     {
                         Id = Convert.ToInt32(dr[13] + ""),
                         Nombre = dr[14] + "",
-                        Estado = ((dr[15] + "" == "1") ? true : false)
+                        Estado = ((dr[15] + "" == "1") ? true : false),
+                        Permisos = BuscarPermisos(dr[13] + "")
                     };
                 }
             }
@@ -61,6 +63,39 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
             }
 
             return vendedor;
+        }
+
+        public List<PermisoModel> BuscarPermisos(string id)
+        {
+            List<PermisoModel> permisos = new List<PermisoModel>();
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("BuscarPermisos", connection);
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    permisos.Add(new PermisoModel()
+                    {
+                        Id = Convert.ToInt32(dr[0] + ""),
+                        Nombre = dr[1] + ""
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return permisos;
         }
 
         public List<TipoDocumentoModel> RecopilarTipoDocumentos()
@@ -420,14 +455,16 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
                     {
                         Id = Convert.ToInt32(dr[0] + ""),
                         Nombre = dr[1] + "",
-                        FechaInicio = dr[2] + "",
-                        FechaFin = dr[3] + "",
+                        FechaInicio = dr[2].ToString().Substring(0, 10),
+                        FechaFin = dr[3].ToString().Substring(0, 10),
                         FechaCreacion = dr[4] + "",
                         Valor = Convert.ToInt32(dr[5] + ""),
-                        DocumentoVendedor = Convert.ToInt32(dr[6] + ""),
-                        NombreVendedor = dr[7] + "",
-                        DocumentoAnunciante = Convert.ToInt32(dr[8] + ""),
-                        NombreAnunciante = dr[9] + "",
+                        NumeroCunias = Convert.ToInt32(dr[6] + ""),
+                        Pdf = dr[7] + "",
+                        DocumentoVendedor = Convert.ToInt32(dr[8] + ""),
+                        NombreVendedor = dr[9] + "",
+                        DocumentoAnunciante = Convert.ToInt32(dr[10] + ""),
+                        NombreAnunciante = dr[11] + "",
                         Cunias = RecopilarCunias(dr[0] + "")
                     });
                 }
@@ -597,6 +634,47 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
             return tarifa;
         }
 
+        public ContratoModel BuscarContrato(string id)
+        {
+            ContratoModel contrato = new ContratoModel();
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("BuscarContrato", connection);
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    contrato.Id = Convert.ToInt32(dr[0] + "");
+                    contrato.Nombre = dr[1] + "";
+                    contrato.FechaInicio = dr[2].ToString().Substring(0, 10);
+                    contrato.FechaFin = dr[3].ToString().Substring(0, 10);
+                    contrato.FechaCreacion = dr[4] + "";
+                    contrato.Valor = Convert.ToInt32(dr[5] + "");
+                    contrato.NumeroCunias = Convert.ToInt32(dr[6] + "");
+                    contrato.Pdf = dr[7] + "";
+                    contrato.DocumentoVendedor = Convert.ToInt32(dr[8] + "");
+                    contrato.NombreVendedor = dr[9] + "";
+                    contrato.DocumentoAnunciante = Convert.ToInt32(dr[10] + "");
+                    contrato.NombreAnunciante = dr[11] + "";
+                    contrato.Cunias = RecopilarCunias(dr[0] + "");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return contrato;
+        }
+
         public void AgregarPrograma(string nombre)
         {
             Conectar();
@@ -702,6 +780,67 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
                 cmd.Parameters.AddWithValue("idGenero", genero);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 MySqlDataReader dr = cmd.ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return;
+        }
+
+        public string AgregarContrato(string nombre, string fechaInicio, string fechaFin, string anunciante, string valor, string vendedor)
+        {
+            string id = "";
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("AgregarContrato", connection);
+                cmd.Parameters.AddWithValue("nombre", nombre);
+                cmd.Parameters.AddWithValue("fechaInicio", fechaInicio);
+                cmd.Parameters.AddWithValue("fechaFin", fechaFin);
+                cmd.Parameters.AddWithValue("valor", valor);
+                cmd.Parameters.AddWithValue("idvendedor", vendedor);
+                cmd.Parameters.AddWithValue("idanunciante", anunciante);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    id = dr[0] + "";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return id;
+        }
+
+        public void AgregarCunia(string nombre, string descripcion, string tarifa, string id)
+        {
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("AgregarCunia", connection);
+                cmd.Parameters.AddWithValue("nombre", nombre);
+                cmd.Parameters.AddWithValue("descripcion", descripcion);
+                cmd.Parameters.AddWithValue("idtarifa", tarifa);
+                cmd.Parameters.AddWithValue("idcontrato", id);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
             }
             catch (Exception e)
             {
@@ -830,6 +969,36 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
             return;
         }
 
+        public void EditarPerfil(string id, string username, string nombre1, string nombre2, string apellido1, string apellido2, string correo, string contrasenia)
+        {
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("EditarPerfil", connection);
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("username", username);
+                cmd.Parameters.AddWithValue("nombre1", nombre1);
+                cmd.Parameters.AddWithValue("nombre2", nombre2);
+                cmd.Parameters.AddWithValue("apellido1", apellido1);
+                cmd.Parameters.AddWithValue("apellido2", apellido2);
+                cmd.Parameters.AddWithValue("correo", correo);
+                cmd.Parameters.AddWithValue("contrasenia", contrasenia);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return;
+        }
+
         public void EliminarTarifa(string id)
         {
             Conectar();
@@ -840,6 +1009,31 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
                 cmd.Parameters.AddWithValue("id", id);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 MySqlDataReader dr = cmd.ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return;
+        }
+
+        public void GuardarPdf(string id, string pdf)
+        {
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("GuardarPdf", connection);
+                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("pdf", pdf);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                MySqlDataReader dr = cmd.ExecuteReader();
+
             }
             catch (Exception e)
             {

@@ -30,7 +30,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                        <img src="Img\cristalina-caqueta.png" width="100px" />
+                        <img src="\Img\cristalina-caqueta.png" width="100px" />
                     </a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -39,21 +39,42 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Vendedor")">Vendedores</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Anunciante")">Anunciantes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Contrato")">Contratos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Programa")">Programas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Tarifa")">Tarifas</a>
-                        </li>
+                        @{
+                            if (User.IsInRole("Gestionar Vendedor"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Vendedor")">Vendedores</a>
+                                </li>
+                            }
+
+                            if (User.IsInRole("Gestionar Anunciante"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Anunciante")">Anunciantes</a>
+                                </li>
+                            }
+
+                            if (User.IsInRole("Gestionar Contrato"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Contrato")">Contratos</a>
+                                </li>
+                            }
+
+                            if (User.IsInRole("Gestionar Programa"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Programa")">Programas</a>
+                                </li>
+                            }
+
+                            if (User.IsInRole("Gestionar Programa"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Tarifa")">Tarifas</a>
+                                </li>
+                            }
+                        }
                         <li class="nav-item">
                             <a class="nav-link" href="@Url.Action("Index", "Perfil")">Perfil</a>
                         </li>
@@ -61,10 +82,10 @@
                 </div>
                 <div class="nav-brand dropdown" style="list-style: none;">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                        <img src="Img\user.png" width="35px" />
+                        <img src="\Img\user.png" width="35px" />
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="@Url.Action("Index", "Login")">Cerrar</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Salir", "Login")">Cerrar</a></li>
                     </ul>
                 </div>
             </div>

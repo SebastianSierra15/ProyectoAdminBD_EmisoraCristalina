@@ -1,12 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoAdmin_EmisoraCristalina.Data;
 using ProyectoAdmin_EmisoraCristalina.Models;
+using System.Data;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using DinkToPdf;
+using Microsoft.AspNetCore.Http.Extensions;
+using DinkToPdf.Contracts;
+using Org.BouncyCastle.Utilities;
+using WebReservas.Data;
+using MongoDB.Bson;
+using System;
 
 namespace ProyectoAdmin_EmisoraCristalina.Controllers
 {
     public class ContratoController : Controller
     {
         Procedimientos cn = new Procedimientos();
+        ConexionMongo mongo = new ConexionMongo();
+
+        private readonly IConverter _converter;
+
+        public ContratoController(IConverter converter)
+        {
+            _converter = converter;
+        }
 
         public IActionResult Index()
         {
@@ -33,24 +51,74 @@ namespace ProyectoAdmin_EmisoraCristalina.Controllers
             return View();
         }
 
-        [HttpPost]
+        public IActionResult VistaPDF(string id)
+        {
+            string[] aux = id.Split(',');
+
+            ContratoModel contrato = cn.BuscarContrato(aux[0]);
+            ViewBag.num = aux[1];
+
+            return View(contrato);
+        }
+
         public IActionResult Crear(IFormCollection form)
         {
-            var cunias = new List<List<string>>();
-            var cuniasNombre = form["cunias[][nombre]"];
-            var cuniasDescripcion = form["cunias[][descripcion]"];
-            var cuniasTarifa = form["cunias[][tarifa]"];
+            var fechaInicio = form["fechaInicio"];
+            var fechaFin = form["fechaFin"];
+            var cuniasNombre = form["cunia[][nombre]"];
+            var cuniasDescripcion = form["cunia[][descripcion]"];
+            var cuniasTarifa = form["cunia[][tarifa]"];
+
+            var user = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+
+            string id = cn.AgregarContrato(form["nombre"] + "", fechaInicio, fechaFin, form["anunciante"] + "", form["valor"] + "", user + "");
 
             for (int i = 0; i < cuniasNombre.Count; i++)
             {
-                var lista = new List<string>();
-                lista.Add(cuniasNombre[i] + "");
-                lista.Add(cuniasDescripcion[i] + "");
-                lista.Add(cuniasTarifa[i] + "");
-                cunias.Add(lista);
+                cn.AgregarCunia(cuniasNombre[i] + "", cuniasDescripcion[i] + "", cuniasTarifa[i] + "", id);
             }
 
-            return RedirectToAction("Index", "Contrato");
+            id = (id + "," + cuniasNombre.Count);
+
+            string pagina_actual = HttpContext.Request.Path;
+            string url_pagina = HttpContext.Request.GetEncodedUrl();
+            url_pagina = url_pagina.Replace(pagina_actual, "");
+            url_pagina = $"{url_pagina}/Contrato/VistaPDF/{id}";
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = new GlobalSettings()
+                {
+                    PaperSize = PaperKind.A4,
+                    Orientation = Orientation.Portrait
+                },
+                Objects =
+                {
+                    new ObjectSettings()
+                    {
+                        Page=url_pagina
+                    }
+                }
+            };
+            byte[] archivoPDF = _converter.Convert(pdf);
+            string nombrePDF = "Contrato.pdf";
+            var file = File(archivoPDF, "application/pdf", nombrePDF);
+
+            using (MemoryStream ms = new MemoryStream(archivoPDF))
+            {
+                ObjectId idPDF = mongo.InsertarPDF(archivoPDF, "Contrato.pdf");
+                cn.GuardarPdf(id, idPDF.ToString());
+            }
+
+            return file;
+        }
+
+        public IActionResult DescargarPDF(string id)
+        {
+            ObjectId idPDF = new ObjectId(id);
+            byte[] contenidoPDF = mongo.ObtenerPDF(idPDF);
+
+            return File(contenidoPDF, "application/pdf", "Contrato.pdf");
         }
 
         [HttpPost]

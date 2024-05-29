@@ -1,0 +1,99 @@
+﻿@model ContratoModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contrato</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1 class="text-center" style="margin-top: 20px;">CONTRATO DE PUBLICIDAD</h1>
+        </div>
+
+        <div class="mt-5 ">
+            <p><strong>Vendedor:</strong></p>
+            <p>@Model.NombreVendedor</p>
+            <p>@Model.DocumentoVendedor</p>
+
+            <p><strong>Anunciante</strong></p>
+            <p>@Model.NombreAnunciante</p>
+            <p>@Model.DocumentoAnunciante</p>
+        </div>
+
+        <div class="mt-lg-5 ">
+            <p><strong>Cantidad de cuñas: </strong>@ViewBag.num</p>
+            <p><strong>Valor del contrato: </strong>$@Model.Valor</p>
+            <p><strong>Fecha de inicio del contrato: </strong>@Model.FechaInicio</p>
+            <p><strong>Feha de finalización del contrato: </strong>@Model.FechaFin</p>
+        </div>
+
+        <div class="mt-lg-2">
+            <h3 class="text-center" style="margin-top: 20px;">Clausulas</h3>
+        </div>
+
+        <div class="mt-lg-5 mb-lg-5">
+            <p><strong>Objeto del contrato</strong></p>
+            <p>
+                El presente contrato tiene por objeto la difusión de publicidad del producto acordado anteriormente a través de cuñas radiales en los programas especificados.
+            </p>
+
+            <p class="mt-4"><strong>Duración del contrato:</strong></p>
+            <p>
+                Este contrato tendrá una duración desde la fecha de inicio hasta la fecha de fin indicadas.
+            </p>
+
+            <p class="mt-4"><strong>Obligaciones del Vendedor:</strong></p>
+            <p>
+                Emitir las cuñas de publicidad en los programas y horarios acordados.
+                Garantizar la calidad de la emisión y que el contenido publicitario sea difundido sin alteraciones.
+            </p>
+
+            <p class="mt-4"><strong>Obligaciones del Anunciante:</strong></p>
+            <p>
+                Proveer el material publicitario necesario para la emisión de las cuñas.
+                Realizar el pago en las condiciones y términos establecidos.
+            </p>
+
+            <p class="mt-4"><strong>Modificaciones:</strong></p>
+            <p>
+                Cualquier modificación al presente contrato deberá ser realizada por escrito y firmada por ambas partes.
+            </p>
+
+            <p class="mt-4"><strong>Rescisión del Contrato:</strong></p>
+            <p>
+                El contrato podrá ser rescindido por cualquiera de las partes.
+            </p>
+        </div>
+
+        <div class="mt-lg-5">
+            <p><strong>VENDEDOR</strong></p>
+            <p>
+                Firma: ________________________
+            </p>
+            <p>
+                Nombre: _______________________
+            </p>
+
+            <p><strong>ANUNCIANTE</strong></p>
+            <p>
+                Nombre: _______________________
+            </p>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    
+</body>
+</html>
+

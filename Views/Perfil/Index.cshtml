@@ -1,4 +1,5 @@
-﻿@{
+﻿@model VendedorModel
+@{
     ViewData["Title"] = "Perfil";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -9,64 +10,74 @@
     <form id="edit" action="@Url.Action("Editar", "Perfil")" method="post">
         <div class="row">
             <div class="col">
-                <input id="id" name="id" value="" hidden />
-                <input id="rol" name="rol" value="" hidden />
-                <input id="estado" name="estado" value="" hidden />
+                <input class="form-control" id="id" name="id" value="@Model.Id" hidden />
                 <label for="tipoDocumento" class="form-label"><strong>Tipo de documento</strong></label>
-                <input type="text" class="form-control" id="tipoDocumento" name="tipoDocumento" readonly>
+                <input type="text" class="form-control" id="tipoDocumento" name="tipoDocumento" value="@Model.Persona.TipoDocumento.Nombre" readonly>
             </div>
 
             <div class="col">
                 <label for="documento" class="form-label"><strong>Número de documento</strong></label>
-                <input type="number" class="form-control" id="documento" name="documento" readonly>
+                <input type="number" class="form-control" id="documento" name="documento" value="@Model.Persona.Documento" readonly>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col">
                 <label for="nombre1" class="form-label"><strong>Primer nombre</strong></label>
-                <input type="text" class="form-control" id="nombre1" name="nombre1" required>
+                <input type="text" class="form-control" id="nombre1" name="nombre1" value="@Model.Persona.Nombre1" required>
             </div>
 
             <div class="col">
                 <label for="nombre2" class="form-label"><strong>Segundo nombre</strong></label>
-                <input type="text" class="form-control" id="nombre2" name="nombre2">
+                <input type="text" class="form-control" id="nombre2" name="nombre2" value="@(Model.Persona.Nombre2 != null ? Model.Persona.Nombre2 : "")">
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col">
                 <label for="apellido1" class="form-label"><strong>Primer apellido</strong></label>
-                <input type="text" class="form-control" id="apellido1" name="apellido1" required>
+                <input type="text" class="form-control" id="apellido1" name="apellido1" value="@Model.Persona.Apellido1" required>
             </div>
 
             <div class="col">
                 <label for="apellido2" class="form-label"><strong>Segundo apellido</strong></label>
-                <input type="text" class="form-control" id="apellido2" name="apellido2">
+                <input type="text" class="form-control" id="apellido2" name="apellido2" value="@(Model.Persona.Apellido2 != null ? Model.Persona.Apellido2 : "")">
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col">
                 <label for="fecha" class="form-label"><strong>Fecha de nacimiento</strong></label>
-                <input type="text" class="form-control" id="fecha" name="fecha" readonly>
+                <input type="text" class="form-control" id="fecha" name="fecha" value="@Model.Persona.FechaNacimiento" readonly>
             </div>
 
             <div class="col">
                 <label for="correo" class="form-label"><strong>Correo</strong></label>
-                <input type="text" class="form-control" id="correo" name="correo" required>
+                <input type="text" class="form-control" id="correo" name="correo" value="@Model.Persona.Correo" required>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col">
                 <label for="username" class="form-label"><strong>Username</strong></label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" value="@Model.Username" required>
             </div>
 
             <div class="col">
                 <label for="genero" class="form-label"><strong>Género</strong></label>
-                <input type="text" class="form-control" id="genero" name="genero" readonly>
+                <input type="text" class="form-control" id="genero" name="genero" value="@Model.Persona.Genero.Nombre" readonly>
+            </div>
+        </div>
+
+        <div class="row mt-3 mb-3">
+            <div class="col">
+                <label for="contrasenia"><strong>Contraseña</strong></label>
+                <input type="password" class="form-control" id="contrasenia" name="contrasenia" placeholder="******" aria-describedby="passwordHelpInline" value="@Model.Contrasenia" required>
+            </div>
+
+            <div class="col">
+                <label for="contrasenia2"><strong>Confirmar contraseña</strong></label>
+                <input type="password" class="form-control" id="contrasenia2" placeholder="******" aria-describedby="passwordHelpInline" required disabled>
             </div>
         </div>
     </form>
@@ -75,3 +86,41 @@
         Guardar
     </button>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous">
+</script>
+
+<script>
+    var fecha = document.getElementById('fecha');
+    var fechaValor = fecha.value;
+    var partesFechaHora = fechaValor.split(' ');
+    var fechaParte = partesFechaHora[0];
+    var componentesFecha = fechaParte.split('/');
+    var fechaFormateada = componentesFecha[2] + '/' + componentesFecha[1] + '/' + componentesFecha[0];
+    fecha.value = fechaFormateada;
+
+    $(document).ready(function () {
+        $('#contrasenia').on('input', function () {
+
+            if ($(this).val().trim() !== '') {
+                $('#contrasenia2').prop('required', true);
+                $('#contrasenia2').prop('disabled', false);
+            } else {
+                $('#contrasenia2').prop('required', false);
+                $('#contrasenia2').prop('disabled', true);
+            }
+        });
+
+        $('#edit').on('submit', function (event) {
+            var contrasenia = $('#contrasenia').val();
+            var contrasenia2 = $('#contrasenia2').val();
+            // Verificar si las contraseñas coinciden
+            if (contrasenia !== contrasenia2) {
+                alert('Las contraseñas no coinciden.');
+                event.preventDefault(); // Detener el envío del formulario
+            }
+        });
+    });
+
+</script>

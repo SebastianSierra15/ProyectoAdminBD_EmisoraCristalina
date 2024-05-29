@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProyectoAdmin_EmisoraCristalina.Data;
 using ProyectoAdmin_EmisoraCristalina.Models;
+using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProyectoAdmin_EmisoraCristalina.Controllers
 {
+    [Authorize(Roles = "Gestionar Programa")]
     public class ProgramaController : Controller
     {
         Procedimientos cn = new Procedimientos();

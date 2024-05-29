@@ -17,12 +17,12 @@
         <div class="row mt-3">
             <div class="col">
                 <label for="fechaInicio" class="form-label"><strong>Fecha de inicio del contrato</strong></label>
-                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required />
             </div>
 
             <div class="col">
                 <label for="fechaFin" class="form-label"><strong>Fecha de terminación del contrato</strong></label>
-                <input type="date" class="form-control" id="fechaFin" name="fechaFin" required disabled>
+                <input type="date" class="form-control" id="fechaFin" name="fechaFin" required disabled />
             </div>
         </div>
 
@@ -65,6 +65,10 @@
 </div>
 
 <div class="text-center mt-5">
+    <a class="btn btn-outline-danger mt-3" href="@Url.Action("Index", "Home")">
+        Cancelar
+    </a>
+
     <button id="btnCrear" class="btn btn-outline-primary mt-3" form="edit" type="submit">
         Crear
     </button>
@@ -178,19 +182,20 @@
         var nuevaFecha = fechaNueva.toISOString().slice(0, 10);
 
         inputFechaFin.min = nuevaFecha;
+        console.log(inputFechaInicio.value);
     }
 
     function desactivar() {
         inputFechaFin.disabled = true;
         btnCrearCunia.disabled = false;
 
-        var fechaInicioDate = new Date(fechaInicio.value);
-        var fechaFinDate = new Date(fechaFin.value);
+        var fechaInicioDate = new Date(inputFechaInicio.value);
+        var fechaFinDate = new Date(inputFechaFin.value);
         var diferenciaEnMilisegundos = fechaFinDate - fechaInicioDate;
         var milisegundosEnUnDia = 1000 * 60 * 60 * 24;
         dias = diferenciaEnMilisegundos / milisegundosEnUnDia;
         dias = Math.round(dias);
-        console.log(dias);
+        console.log(inputFechaFin.value);
     }
 
     document.getElementById('btnCrear').addEventListener('click', function (event) {
@@ -198,6 +203,9 @@
         if (filas.length === 0) {
             event.preventDefault();
             alert("Debe agregar al menos una cuña antes de enviar el formulario.");
+        } else {
+            inputFechaFin.disabled = false;
+            inputFechaInicio.disabled = false;
         }
     });
 
