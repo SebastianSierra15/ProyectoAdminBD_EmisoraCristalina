@@ -9,12 +9,12 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
     public class Conexion
     {
         protected MySqlConnection connection;
-        
+
         protected void Conectar()
         {
             try
             {
-                connection = new MySqlConnection("Server=localhost;Port=3306;Database=Emisora_Cristalina;Uid=root;Pwd=2002");
+                connection = new MySqlConnection("Server=localhost;Port=3306;Database=Emisora_Cristalina;Uid=root;Pwd=root");
                 connection.Open();
             }
             catch (Exception e)

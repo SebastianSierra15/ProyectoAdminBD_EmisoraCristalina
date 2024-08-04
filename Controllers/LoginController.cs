@@ -25,7 +25,7 @@ namespace ProyectoAdmin_EmisoraCristalina.Controllers
         public async Task<IActionResult> Validar(string username, string contrasenia)
         {
             VendedorModel vendedor = cn.ValidarVendedor(username, contrasenia);
-            
+
             if (vendedor.Username != null)
             {
                 var claims = new List<Claim>

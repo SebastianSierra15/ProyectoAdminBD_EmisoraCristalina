@@ -57,7 +57,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                 </tbody>
             </table>
         </div>
@@ -158,13 +157,13 @@
         const nombre = document.getElementById('nombreCunia').value;
         const descripcion = document.getElementById('descripcionCunia').value;
         const fila = `<tr>
-            <td scope="row">${nombre}</td>
-            <td>${descripcion}</td>
-            <td>${result.programa.nombre} $${result.valorEspecial} (${result.rangoInicial}sg - ${result.rangoFinal}sg)</td>
-            <input type="hidden" name="cunia[][nombre]" value="${nombre}"/>
-            <input type="hidden" name="cunia[][descripcion]" value="${descripcion}"/>
-            <input type="hidden" name="cunia[][tarifa]" value="${result.id}"/>
-        <tr>`;
+                <td scope="row">${nombre}</td>
+                <td>${descripcion}</td>
+                <td>${result.programa.nombre} $${result.valorEspecial} (${result.rangoInicial}sg - ${result.rangoFinal}sg)</td>
+                <input type="hidden" name="cunia[][nombre]" value="${nombre}"/>
+                <input type="hidden" name="cunia[][descripcion]" value="${descripcion}"/>
+                <input type="hidden" name="cunia[][tarifa]" value="${result.id}"/>
+            <tr>`;
 
         tabla.insertAdjacentHTML('beforeend', fila)
         document.getElementById('crear').reset();
@@ -226,4 +225,3 @@
     }
 
 </script>
-                                       

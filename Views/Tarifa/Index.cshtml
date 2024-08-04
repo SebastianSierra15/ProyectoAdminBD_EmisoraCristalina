@@ -72,14 +72,14 @@
                             <div class="col">
                                 <label for="programa" class="form-label"><strong>Programa</strong></label>
                                 <select class="form-select" id="programa" name="programa" required>
-                                    @foreach(ProgramaModel programa in ViewBag.programas)
+                                    @foreach (ProgramaModel programa in ViewBag.programas)
                                     {
                                         <option value="@programa.Id">@programa.Nombre</option>
                                     }
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-3">
                             <div class="col">
                                 <label for="rangoInicial" class="form-label"><strong>Rango Inicial (sg)</strong></label>
@@ -226,7 +226,7 @@
                 var rango2 = fila.querySelector("td:nth-child(4)").textContent;
                 var valor1 = fila.querySelector("td:nth-child(5)").textContent;
                 var valor2 = fila.querySelector("td:nth-child(6)").textContent;
-                
+
                 inputId.value = id;
                 inputRango1.value = rango1;
                 inputRango2.value = rango2;

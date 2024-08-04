@@ -12,7 +12,7 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
     public class Procedimientos : Conexion
     {
         MySqlCommand? cmd;
-        
+
         public VendedorModel ValidarVendedor(string username, string contrasenia)
         {
             VendedorModel vendedor = new VendedorModel();
