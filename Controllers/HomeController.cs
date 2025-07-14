@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Models;
 using System.Diagnostics;
 
-namespace ProyectoAdmin_EmisoraCristalina.Controllers
+namespace RadioDemo.Controllers
 {
     public class HomeController : Controller
     {

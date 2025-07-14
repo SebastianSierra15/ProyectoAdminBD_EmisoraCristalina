@@ -1,7 +1,7 @@
 using DinkToPdf.Contracts;
 using DinkToPdf;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using ProyectoAdmin_EmisoraCristalina.Helpers;
+using RadioDemo.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 

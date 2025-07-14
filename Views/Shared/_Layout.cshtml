@@ -21,8 +21,33 @@
             cursor: pointer;
             padding: 0;
         }
-    </style>
 
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.2s ease-in-out;
+        }
+
+            .nav-link:hover {
+                color: #ffffff !important;
+            }
+
+        .dropdown-menu {
+            background-color: #343a40;
+        }
+
+        .dropdown-item {
+            color: #ffffff;
+        }
+
+            .dropdown-item:hover {
+                background-color: #495057;
+                color: #ffffff;
+            }
+
+        .navbar-brand img {
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -80,11 +105,11 @@
                         </li>
                     </ul>
                 </div>
-                <div class="nav-brand dropdown" style="list-style: none;">
+                <div class="dropdown ms-2">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                         <img src="\Img\user.png" width="35px" />
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="@Url.Action("Salir", "Login")">Cerrar</a></li>
                     </ul>
                 </div>

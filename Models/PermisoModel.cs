@@ -1,4 +1,4 @@
-﻿namespace ProyectoAdmin_EmisoraCristalina.Models
+﻿namespace RadioDemo.Models
 {
     public class PermisoModel
     {

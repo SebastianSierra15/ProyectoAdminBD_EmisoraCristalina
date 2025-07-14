@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProyectoAdmin_EmisoraCristalina.Data;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Data;
+using RadioDemo.Models;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ProyectoAdmin_EmisoraCristalina.Controllers
+namespace RadioDemo.Controllers
 {
     [Authorize(Roles = "Gestionar Tarifa")]
     public class TarifaController : Controller

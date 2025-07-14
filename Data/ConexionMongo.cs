@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using System.Text.Json;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Models;
 
 namespace WebReservas.Data
 {
@@ -14,7 +14,7 @@ namespace WebReservas.Data
         public ConexionMongo()
         {
             var client = new MongoClient("mongodb://localhost:27017");
-            cnm = client.GetDatabase("Admin_bd");
+            cnm = client.GetDatabase("Cristalina_db");
             documentoCollection = cnm.GetCollection<BsonDocument>("Documento");
         }
 

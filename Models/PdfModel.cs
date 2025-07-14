@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace ProyectoAdmin_EmisoraCristalina.Models
+namespace RadioDemo.Models
 {
     public class PdfModel
     {

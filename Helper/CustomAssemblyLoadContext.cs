@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-namespace ProyectoAdmin_EmisoraCristalina.Helpers
+namespace RadioDemo.Helpers
 {
     public class CustomAssemblyLoadContext : AssemblyLoadContext
     {

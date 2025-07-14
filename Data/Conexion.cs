@@ -3,7 +3,7 @@ using System.Data;
 using System.Reflection;
 using System.Runtime.Intrinsics.X86;
 
-namespace ProyectoAdmin_EmisoraCristalina.Data
+namespace RadioDemo.Data
 {
 
     public class Conexion
@@ -14,7 +14,7 @@ namespace ProyectoAdmin_EmisoraCristalina.Data
         {
             try
             {
-                connection = new MySqlConnection("Server=localhost;Port=3306;Database=Emisora_Cristalina;Uid=root;Pwd=root");
+                connection = new MySqlConnection("Server=localhost;Port=3306;Database=emisora_cristalina;Uid=root;Pwd=root");
                 connection.Open();
             }
             catch (Exception e)

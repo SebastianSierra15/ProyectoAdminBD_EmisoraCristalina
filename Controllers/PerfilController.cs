@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProyectoAdmin_EmisoraCristalina.Data;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Data;
+using RadioDemo.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace ProyectoAdmin_EmisoraCristalina.Controllers
+namespace RadioDemo.Controllers
 {
     [Authorize]
     public class PerfilController : Controller

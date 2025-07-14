@@ -3,11 +3,11 @@ using MySqlX.XDevAPI.Relational;
 using System.Data;
 using System.Runtime.Intrinsics.X86;
 using System.Transactions;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics.Contracts;
 
-namespace ProyectoAdmin_EmisoraCristalina.Data
+namespace RadioDemo.Data
 {
     public class Procedimientos : Conexion
     {

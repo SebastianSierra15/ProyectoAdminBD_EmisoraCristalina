@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProyectoAdmin_EmisoraCristalina.Data;
-using ProyectoAdmin_EmisoraCristalina.Models;
+using RadioDemo.Data;
+using RadioDemo.Models;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -12,7 +12,7 @@ using WebReservas.Data;
 using MongoDB.Bson;
 using System;
 
-namespace ProyectoAdmin_EmisoraCristalina.Controllers
+namespace RadioDemo.Controllers
 {
     public class ContratoController : Controller
     {
