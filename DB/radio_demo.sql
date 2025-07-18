@@ -50,17 +50,18 @@ DELIMITER ;
 -- Volcando estructura para procedimiento radio_demo.AgregarContrato
 DELIMITER //
 CREATE PROCEDURE `AgregarContrato`(
-	IN nombre VARCHAR(70),
-	IN fechaInicio DATE,
-	IN fechaFin DATE,
-	IN valor INT,
-	IN idvendedor INT,
-	IN idanunciante INT
+	IN `nombre` VARCHAR(70),
+	IN `fechaInicio` DATE,
+	IN `fechaFin` DATE,
+	IN `valor` INT,
+	IN `idvendedor` INT,
+	IN `idanunciante` INT,
+	IN `numCunias` INT
 )
 BEGIN
 	
-	INSERT INTO contrato (contrato.NOMBRE_CONTRATO, contrato.FECHAINICIO_CONTRATO, contrato.FECHAFIN_CONTRATO, contrato.FECHACREACION_CONTRATO, contrato.VALORTOTAL_CONTRATO, contrato.FK_ID_VENDEDOR, contrato.FK_NIT_ANUNCIANTE)
-	VALUES (nombre, fechaInicio, fechaFin, NOW(), valor, idvendedor, idanunciante);
+	INSERT INTO contrato (contrato.NOMBRE_CONTRATO, contrato.FECHAINICIO_CONTRATO, contrato.FECHAFIN_CONTRATO, contrato.FECHACREACION_CONTRATO, contrato.VALORTOTAL_CONTRATO, contrato.FK_ID_VENDEDOR, contrato.FK_NIT_ANUNCIANTE, contrato.NUMEROCUNIAS_CONTRATO)
+	VALUES (nombre, fechaInicio, fechaFin, NOW(), valor, idvendedor, idanunciante, numCunias);
 	
 	SELECT LAST_INSERT_ID();
 	
@@ -162,11 +163,12 @@ CREATE TABLE IF NOT EXISTS `auditoriaeliminartarifa` (
   `TARIFA_AUDITORIAELIMINARTARIFA` int NOT NULL,
   `FECHA_AUDITORIAELIMINARTARIFA` datetime NOT NULL,
   PRIMARY KEY (`ID_AUDITORIAELIMINARTARIFA`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.auditoriaeliminartarifa: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.auditoriaeliminartarifa: ~2 rows (aproximadamente)
 INSERT INTO `auditoriaeliminartarifa` (`ID_AUDITORIAELIMINARTARIFA`, `TARIFA_AUDITORIAELIMINARTARIFA`, `FECHA_AUDITORIAELIMINARTARIFA`) VALUES
-	(1, 9, '2024-05-26 23:20:32');
+	(1, 9, '2024-05-26 23:20:32'),
+	(2, 6, '2025-07-17 10:30:17');
 
 -- Volcando estructura para procedimiento radio_demo.BuscarAnunciante
 DELIMITER //
@@ -264,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `contrato` (
   `FECHACREACION_CONTRATO` datetime NOT NULL,
   `VALORTOTAL_CONTRATO` int NOT NULL,
   `NUMEROCUNIAS_CONTRATO` int NOT NULL DEFAULT '0',
-  `PDF_CONTRATO` varchar(200) DEFAULT '',
+  `PDF_CONTRATO` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '',
   `FK_ID_VENDEDOR` int NOT NULL,
   `FK_NIT_ANUNCIANTE` int NOT NULL,
   PRIMARY KEY (`ID_CONTRATO`),
@@ -272,11 +274,11 @@ CREATE TABLE IF NOT EXISTS `contrato` (
   KEY `FK_ANUNCIANTE_CONTRATO` (`FK_NIT_ANUNCIANTE`),
   CONSTRAINT `FK_ANUNCIANTE_CONTRATO` FOREIGN KEY (`FK_NIT_ANUNCIANTE`) REFERENCES `anunciante` (`NIT_ANUNCIANTE`),
   CONSTRAINT `FK_VENDEDOR_CONTRATO` FOREIGN KEY (`FK_ID_VENDEDOR`) REFERENCES `vendedor` (`ID_VENDEDOR`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.contrato: ~1 rows (aproximadamente)
 INSERT INTO `contrato` (`ID_CONTRATO`, `NOMBRE_CONTRATO`, `FECHAINICIO_CONTRATO`, `FECHAFIN_CONTRATO`, `FECHACREACION_CONTRATO`, `VALORTOTAL_CONTRATO`, `NUMEROCUNIAS_CONTRATO`, `PDF_CONTRATO`, `FK_ID_VENDEDOR`, `FK_NIT_ANUNCIANTE`) VALUES
-	(45, 'Contrato1', '2024-08-05', '2024-09-05', '2024-08-04 15:55:45', 685100, 1, '66afead543568e28fac4f49d', 1, 1);
+	(55, 'Contrato Nuevo', '2025-07-18', '2025-08-17', '2025-07-17 18:28:41', 663000, 2, '6879873f28211b0724a1ec95', 1, 1);
 
 -- Volcando estructura para tabla radio_demo.cunia
 CREATE TABLE IF NOT EXISTS `cunia` (
@@ -291,11 +293,11 @@ CREATE TABLE IF NOT EXISTS `cunia` (
   KEY `FK_CONTRATO_CUNIA` (`FK_ID_CONTRATO`),
   CONSTRAINT `FK_CONTRATO_CUNIA` FOREIGN KEY (`FK_ID_CONTRATO`) REFERENCES `contrato` (`ID_CONTRATO`),
   CONSTRAINT `FK_TARIFA_CUNIA` FOREIGN KEY (`FK_ID_TARIFA`) REFERENCES `tarifa` (`ID_TARIFA`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.cunia: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.cunia: ~0 rows (aproximadamente)
 INSERT INTO `cunia` (`ID_CUNIA`, `NOMBRE_CUNIA`, `DESCRIPCION_CUNIA`, `ESTADO_CUNIA`, `FK_ID_TARIFA`, `FK_ID_CONTRATO`) VALUES
-	(46, 'Cunia1', 'aaaaaaaaaaaaa', 1, 1, 45);
+	(56, 'Cunia 1', 'Cuniaaaaa', 1, 1, 55);
 
 -- Volcando estructura para procedimiento radio_demo.EditarAnunciante
 DELIMITER //
@@ -503,7 +505,7 @@ CREATE TABLE IF NOT EXISTS `persona` (
 
 -- Volcando datos para la tabla radio_demo.persona: ~6 rows (aproximadamente)
 INSERT INTO `persona` (`DOCUMENTO_PERSONA`, `NOMBRE1_PERSONA`, `NOMBRE2_PERSONA`, `APELLIDO1_PERSONA`, `APELLIDO2_PERSONA`, `FECHANACIMIENTO_PERSONA`, `CORREO_PERSONA`, `FK_ID_TIPODOCUMENTO`, `FK_ID_GENERO`) VALUES
-	(123, 'Jhoan', 'Sebastián', 'Sierra', 'Perdomo', '2002-03-24', 'admin@gmail.com', 1, 1),
+	(123, 'JHOAN', 'SEBASTIÁN', 'SIERRA', 'PERDOMO', '2002-03-24', 'admin@gmail.com', 1, 1),
 	(456, 'Carolina', NULL, 'Perez', 'Campos', '2004-05-16', 'anunciante1@gmail.com', 2, 2),
 	(22222, 'Johana', NULL, 'Sanchez', 'Plaza', '2008-05-04', 'johana@gmail.com', 3, 2),
 	(222222, 'EMILIO', NULL, 'FIGUEROA', 'FACUNDO', '1999-01-06', 'emilio1234@gmail.com', 1, 1),
@@ -520,7 +522,7 @@ CREATE TABLE IF NOT EXISTS `programa` (
 
 -- Volcando datos para la tabla radio_demo.programa: ~3 rows (aproximadamente)
 INSERT INTO `programa` (`ID_PROGRAMA`, `NOMBRE_PROGRAMA`, `ESTADO_PROGRAMA`) VALUES
-	(1, 'Noticiero El Imparcial', 1),
+	(1, 'Noticiero El Imparcial', 0),
 	(2, 'Pido La Palabra', 1),
 	(3, 'Programación Musical', 1);
 
@@ -690,7 +692,7 @@ INSERT INTO `tarifa` (`ID_TARIFA`, `VALORPUBLICADO_TARIFA`, `VALORREAL_TARIFA`, 
 	(3, 230000, 36800, 30, 30, 1, 1),
 	(4, 138000, 22100, 15, 15, 1, 2),
 	(5, 172500, 27600, 20, 20, 1, 2),
-	(6, 230000, 36800, 30, 30, 1, 2),
+	(6, 230000, 36800, 30, 30, 0, 2),
 	(9, 1, 1, 10, 10, 0, 1),
 	(10, 10000001, 10001, 10, 11, 1, 1);
 
@@ -745,7 +747,7 @@ CREATE TABLE IF NOT EXISTS `vendedor` (
 
 -- Volcando datos para la tabla radio_demo.vendedor: ~2 rows (aproximadamente)
 INSERT INTO `vendedor` (`ID_VENDEDOR`, `USERNAME_VENDEDOR`, `CONTRASENIA_VENDEDOR`, `ESTADO_VENDEDOR`, `FK_DOCUMENTO_PERSONA`, `FK_ID_ROL`) VALUES
-	(1, 'admin', '1234', 1, 123, 1),
+	(1, 'admin', '1234', 0, 123, 1),
 	(2, 'empleado', '1234', 1, 222222, 2);
 
 -- Volcando estructura para vista radio_demo.vistabuscarcontrato
@@ -760,27 +762,10 @@ CREATE TABLE `vistabuscarcontrato` (
 	`NUMEROCUNIAS_CONTRATO` INT NOT NULL,
 	`PDF_CONTRATO` VARCHAR(1) NULL COLLATE 'utf8mb4_0900_ai_ci',
 	`DOCUMENTO_VENDEDOR` INT NOT NULL,
-	`NOMBRE_VENDEDOR` VARCHAR(1) NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`NOMBRE_VENDEDOR` VARCHAR(1) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
 	`DOCUMENTO_ANUNCIANTE` INT NOT NULL,
-	`NOMBRE_ANUNCIANTE` VARCHAR(1) NULL COLLATE 'utf8mb4_0900_ai_ci'
+	`NOMBRE_ANUNCIANTE` VARCHAR(1) NOT NULL COLLATE 'utf8mb4_0900_ai_ci'
 ) ENGINE=MyISAM;
-
--- Volcando estructura para disparador radio_demo.ActualizarNumeroCuniasContrato
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `ActualizarNumeroCuniasContrato` BEFORE INSERT ON `cunia` FOR EACH ROW BEGIN
-	
-	DECLARE id INT;
-	SELECT MAX(contrato.ID_CONTRATO) INTO id
-	FROM contrato;
-	
-	UPDATE contrato
-	SET contrato.NUMEROCUNIAS_CONTRATO = (contrato.NUMEROCUNIAS_CONTRATO + 1)
-	WHERE contrato.ID_CONTRATO = id;
-	
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Volcando estructura para disparador radio_demo.AuditoriaTarifa
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';

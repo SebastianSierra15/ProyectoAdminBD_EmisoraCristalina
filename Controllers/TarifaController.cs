@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace RadioDemo.Controllers
 {
-    [Authorize(Roles = "Gestionar Tarifa")]
+    [Authorize(Roles = "Consultar Tarifa")]
     public class TarifaController : Controller
     {
         Procedimientos cn = new Procedimientos();
@@ -23,6 +23,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editar Tarifa")]
         public ActionResult Editar(string id, string programa, string rangoInicial, string rangoFinal, string valorPublicado, string valorEspecial)
         {
             cn.EditarTarifa(id, programa, rangoInicial, rangoFinal, valorPublicado, valorEspecial);
@@ -31,6 +32,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Agregar Tarifa")]
         public ActionResult Agregar(string rangoInicial, string rangoFinal, string valorPublicado, string valorEspecial, string programa)
         {
             cn.AgregarTarifa(rangoInicial, rangoFinal, valorPublicado, valorEspecial, programa);
@@ -39,6 +41,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Eliminar Tarifa")]
         public ActionResult Eliminar(string id)
         {
             cn.EliminarTarifa(id);

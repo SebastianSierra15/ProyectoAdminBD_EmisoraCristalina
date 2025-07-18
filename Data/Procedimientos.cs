@@ -675,6 +675,72 @@ namespace RadioDemo.Data
             return contrato;
         }
 
+        public int ContarContratosActivos()
+        {
+            int total = 0;
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("SELECT COUNT(*) FROM contrato WHERE FECHAFIN_CONTRATO >= CURDATE()", connection);
+                total = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return total;
+        }
+
+        public int ContarAnunciantes()
+        {
+            int total = 0;
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("SELECT COUNT(*) FROM anunciante", connection);
+                total = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return total;
+        }
+
+        public int ContarVendedores()
+        {
+            int total = 0;
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("SELECT COUNT(*) FROM vendedor", connection);
+                total = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return total;
+        }
+
         public void AgregarPrograma(string nombre)
         {
             Conectar();
@@ -793,7 +859,7 @@ namespace RadioDemo.Data
             return;
         }
 
-        public string AgregarContrato(string nombre, string fechaInicio, string fechaFin, string anunciante, string valor, string vendedor)
+        public string AgregarContrato(string nombre, string fechaInicio, string fechaFin, string anunciante, string valor, string vendedor, int numCunias)
         {
             string id = "";
             Conectar();
@@ -807,6 +873,7 @@ namespace RadioDemo.Data
                 cmd.Parameters.AddWithValue("valor", valor);
                 cmd.Parameters.AddWithValue("idvendedor", vendedor);
                 cmd.Parameters.AddWithValue("idanunciante", anunciante);
+                cmd.Parameters.AddWithValue("numCunias", numCunias);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 MySqlDataReader dr = cmd.ExecuteReader();
 

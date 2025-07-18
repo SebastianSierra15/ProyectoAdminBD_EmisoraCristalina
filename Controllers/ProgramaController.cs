@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace RadioDemo.Controllers
 {
-    [Authorize(Roles = "Gestionar Programa")]
+    [Authorize(Roles = "Consultar Programa")]
     public class ProgramaController : Controller
     {
         Procedimientos cn = new Procedimientos();
@@ -20,6 +20,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editar Programa")]
         public ActionResult Editar(string id, string nombre, string estado)
         {
             cn.EditarPrograma(id, nombre, estado);
@@ -28,6 +29,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Agregar Programa")]
         public ActionResult Agregar(string nombre)
         {
             cn.AgregarPrograma(nombre);

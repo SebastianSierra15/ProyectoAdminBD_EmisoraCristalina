@@ -15,9 +15,9 @@ builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
-        option.LoginPath = "/Home/Index";
+        option.LoginPath = "/Login/Index";
+        option.AccessDeniedPath = "/Error/403";
         option.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        option.AccessDeniedPath = "/Login/Index";
     });
 
 var app = builder.Build();
@@ -25,15 +25,20 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/500");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStatusCodePagesWithReExecute("/Error/{0}"); // para errores como 404, 403
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Login}/{action=Index}/{id?}");

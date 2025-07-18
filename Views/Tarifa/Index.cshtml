@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Tarifas";
+    ViewData["Title"] = "Tarifas - Radio Demo";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -7,7 +7,7 @@
 
 <div class="container mt-5">
     <table class="table table-hover table-bordered table-responsive">
-        <thead>
+        <thead class="table-light">
             <tr>
                 <th scope="col" class="text-center">Id</th>
                 <th scope="col" class="text-center">Programa</th>
@@ -16,6 +16,7 @@
                 <th scope="col" class="text-center">Valor Publicado</th>
                 <th scope="col" class="text-center">Valor Especial</th>
                 <th scope="col" class="text-center">Modificar</th>
+                <th scope="col" class="text-center">Eliminar</th>
             </tr>
         </thead>
         <tbody>
@@ -29,9 +30,17 @@
                     <td class="text-center">@tarifa.ValorPublicado</td>
                     <td class="text-center">@tarifa.ValorEspecial</td>
                     <td class="text-center">
-                        <button class="modal-trigger-button" data-bs-toggle="modal" data-bs-target="#editar">
+                        <button class="modal-trigger-button" data-bs-toggle="modal" data-bs-target="#editar" title="Editar tarifa">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="small-icon">
                                 <path d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z" />
+                            </svg>
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn p-0 border-0 text-danger btn-delete-tarifa" data-bs-toggle="modal" data-bs-target="#confirmDelete" title="Eliminar tarifa">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0v-6zm2-.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5z" />
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 1 1 0-2h3.086a1 1 0 0 1 .707.293l.707.707h2.586l.707-.707A1 1 0 0 1 10.414 1H13.5a1 1 0 0 1 1 1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118z" />
                             </svg>
                         </button>
                     </td>
@@ -41,13 +50,9 @@
     </table>
 </div>
 
-<div class="text-center">
-    <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#agregar">
-        Agregar
-    </button>
-
-    <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#eliminar">
-        Eliminar
+<div class="text-center mb-4">
+    <button class="btn btn-success me-2" type="button" data-bs-toggle="modal" data-bs-target="#agregar">
+        <i class="bx bx-plus"></i> Agregar
     </button>
 </div>
 
@@ -172,35 +177,22 @@
     </div>
 </div>
 
-<div class="modal fade" id="eliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog  modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fs-5 text-center">
-                    Tarifa
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="modal-body">
-                <div class="container">
-                    <form id="delete" action="@Url.Action("Eliminar", "Tarifa")" method="post">
-                        <div class="row">
-                            <div class="col">
-                                <label for="id" class="form-label"><strong>Id</strong></label>
-                                <select class="form-select" id="id" name="id" required>
-                                    @foreach (TarifaModel tarifa in ViewBag.tarifas)
-                                    {
-                                        <option>@tarifa.Id</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+            <div class="modal-body text-center">
+                <p>¿Deseas eliminar la tarifa (ID <span id="confirm-id"></span>) del programa <strong id="confirm-programa"></strong>?</p>
             </div>
-
             <div class="modal-footer">
-                <button type="submit" form="delete" class="btn btn-success">Aceptar</button>
+                <form id="formDelete" method="post" action="@Url.Action("Eliminar", "Tarifa")">
+                    <input type="hidden" name="id" id="confirm-id-input">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                </form>
             </div>
         </div>
     </div>
@@ -234,6 +226,23 @@
                 inputValor2.value = valor2;
                 seleccionar(selectPrograma, programa);
             });
+        });
+    });
+
+    const deleteButtons = document.querySelectorAll('.btn-delete-tarifa');
+    const confirmPrograma = document.getElementById('confirm-programa');
+    const confirmId = document.getElementById('confirm-id');
+    const confirmIdInput = document.getElementById('confirm-id-input');
+
+    deleteButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            const fila = this.closest("tr");
+            const id = fila.querySelector("th").textContent;
+            const programa = fila.querySelector("td:nth-child(2)").textContent;
+
+            confirmId.textContent = id;
+            confirmPrograma.textContent = programa;
+            confirmIdInput.value = id;
         });
     });
 

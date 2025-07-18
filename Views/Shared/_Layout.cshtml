@@ -9,6 +9,23 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
     <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+
         .small-icon {
             width: 20px;
             height: 20px;
@@ -22,13 +39,25 @@
             padding: 0;
         }
 
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-            transition: color 0.2s ease-in-out;
+        .navbar {
+            background-color: #F2F2F2;
+            border-bottom: 1px solid #DDDDDD;
         }
 
-            .nav-link:hover {
-                color: #ffffff !important;
+        .navbar-nav .nav-link {
+            color: #1C1C1C;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #0099FF;
+            }
+
+            .navbar-nav .nav-link.active {
+                display: inline-block;
+                font-weight: bold;
+                color: #007BFF !important;
+                border-bottom: 2px solid #007BFF;
+                padding-bottom: 2px;
             }
 
         .dropdown-menu {
@@ -43,83 +72,101 @@
                 background-color: #495057;
                 color: #ffffff;
             }
-
-        .navbar-brand img {
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
-        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow fixed-top mb-3" style="background-color: #666666;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow fixed-top mb-3">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                        <img src="\Img\cristalina-caqueta.png" width="100px" />
+                        <img src="\Img\radio-demo.png" width="180px" />
                     </a>
                 </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                <div class="collapse navbar-collapse">
+                    @{
+                        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                    }
                     <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Home" ? "active" : "")" href="@Url.Action("Index", "Home")">Inicio</a>
+                        </li>
                         @{
-                            if (User.IsInRole("Gestionar Vendedor"))
+                            if (User.IsInRole("Consultar Vendedor"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Vendedor")">Vendedores</a>
+                                    <a class="nav-link @(currentController == "Vendedor" ? "active" : "")" href="@Url.Action("Index", "Vendedor")">Vendedores</a>
                                 </li>
                             }
 
-                            if (User.IsInRole("Gestionar Anunciante"))
+                            if (User.IsInRole("Consultar Anunciante"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Anunciante")">Anunciantes</a>
+                                    <a class="nav-link @(currentController == "Anunciante" ? "active" : "")" href="@Url.Action("Index", "Anunciante")">Anunciantes</a>
                                 </li>
                             }
 
-                            if (User.IsInRole("Gestionar Contrato"))
+                            if (User.IsInRole("Consultar Contrato"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Contrato")">Contratos</a>
+                                    <a class="nav-link @(currentController == "Contrato" ? "active" : "")" href="@Url.Action("Index", "Contrato")">Contratos</a>
                                 </li>
                             }
 
-                            if (User.IsInRole("Gestionar Programa"))
+                            if (User.IsInRole("Consultar Programa"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Programa")">Programas</a>
+                                    <a class="nav-link @(currentController == "Programa" ? "active" : "")" href="@Url.Action("Index", "Programa")">Programas</a>
                                 </li>
                             }
 
-                            if (User.IsInRole("Gestionar Programa"))
+                            if (User.IsInRole("Consultar Programa"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Tarifa")">Tarifas</a>
+                                    <a class="nav-link @(currentController == "Tarifa" ? "active" : "")" href="@Url.Action("Index", "Tarifa")">Tarifas</a>
                                 </li>
                             }
                         }
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Perfil")">Perfil</a>
+                            <a class="nav-link @(currentController == "Perfil" ? "active" : "")" href="@Url.Action("Index", "Perfil")">Perfil</a>
                         </li>
                     </ul>
                 </div>
-                <div class="dropdown ms-2">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                        <img src="\Img\user.png" width="35px" />
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="@Url.Action("Salir", "Login")">Cerrar</a></li>
-                    </ul>
+
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                            <img src="\Img\user.png" width="35px" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="@Url.Action("Salir", "Login")">Cerrar</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container">
+    <main class="container">
         @RenderBody()
-    </div>
+    </main>
+
+    <footer class="bg-light text-center text-muted pb-3" style="font-size: 14px;">
+        <div class="container">
+            <hr class="border-top border-secondary w-100 mb-2" />
+            <div class="pb-2">
+                &copy; @DateTime.Now.Year Radio Demo. Todos los derechos reservados.
+                <br />
+                Desarrollado por Ing. Sebastián Sierra
+            </div>
+        </div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous">

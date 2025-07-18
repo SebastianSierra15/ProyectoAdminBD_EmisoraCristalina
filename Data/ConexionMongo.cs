@@ -14,7 +14,7 @@ namespace WebReservas.Data
         public ConexionMongo()
         {
             var client = new MongoClient("mongodb://localhost:27017");
-            cnm = client.GetDatabase("Cristalina_db");
+            cnm = client.GetDatabase("radio_demo");
             documentoCollection = cnm.GetCollection<BsonDocument>("Documento");
         }
 

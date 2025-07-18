@@ -1,99 +1,114 @@
 ﻿@model ContratoModel
 @{
     Layout = null;
+    var valorFormateado = string.Format(new System.Globalization.CultureInfo("es-CO"), "{0:N0}", Model.Valor);
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contrato</title>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Contrato Publicitario</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 60px;
+            color: #000;
+        }
 
+        h1, h3 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        p {
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        .seccion {
+            margin-top: 40px;
+        }
+
+        .firmas {
+            margin-top: 80px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .firmas div {
+                width: 45%;
+                text-align: center;
+            }
+
+            .firmas p {
+                margin: 10px 0;
+            }
+
+        .datos {
+            margin-bottom: 20px;
+        }
+
+            .datos strong {
+                display: inline-block;
+                width: 220px;
+            }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="text-center mb-5">
-            <h1 class="text-center" style="margin-top: 20px;">CONTRATO DE PUBLICIDAD</h1>
-        </div>
 
-        <div class="mt-5 ">
-            <p><strong>Vendedor:</strong></p>
-            <p>@Model.NombreVendedor</p>
-            <p>@Model.DocumentoVendedor</p>
+    <h1>CONTRATO DE PUBLICIDAD</h1>
 
-            <p><strong>Anunciante</strong></p>
-            <p>@Model.NombreAnunciante</p>
-            <p>@Model.DocumentoAnunciante</p>
-        </div>
-
-        <div class="mt-lg-5 ">
-            <p><strong>Cantidad de cuñas: </strong>@ViewBag.num</p>
-            <p><strong>Valor del contrato: </strong>$@Model.Valor</p>
-            <p><strong>Fecha de inicio del contrato: </strong>@Model.FechaInicio</p>
-            <p><strong>Feha de finalización del contrato: </strong>@Model.FechaFin</p>
-        </div>
-
-        <div class="mt-lg-2">
-            <h3 class="text-center" style="margin-top: 20px;">Clausulas</h3>
-        </div>
-
-        <div class="mt-lg-5 mb-lg-5">
-            <p><strong>Objeto del contrato</strong></p>
-            <p>
-                El presente contrato tiene por objeto la difusión de publicidad del producto acordado anteriormente a través de cuñas radiales en los programas especificados.
-            </p>
-
-            <p class="mt-4"><strong>Duración del contrato:</strong></p>
-            <p>
-                Este contrato tendrá una duración desde la fecha de inicio hasta la fecha de fin indicadas.
-            </p>
-
-            <p class="mt-4"><strong>Obligaciones del Vendedor:</strong></p>
-            <p>
-                Emitir las cuñas de publicidad en los programas y horarios acordados.
-                Garantizar la calidad de la emisión y que el contenido publicitario sea difundido sin alteraciones.
-            </p>
-
-            <p class="mt-4"><strong>Obligaciones del Anunciante:</strong></p>
-            <p>
-                Proveer el material publicitario necesario para la emisión de las cuñas.
-                Realizar el pago en las condiciones y términos establecidos.
-            </p>
-
-            <p class="mt-4"><strong>Modificaciones:</strong></p>
-            <p>
-                Cualquier modificación al presente contrato deberá ser realizada por escrito y firmada por ambas partes.
-            </p>
-
-            <p class="mt-4"><strong>Rescisión del Contrato:</strong></p>
-            <p>
-                El contrato podrá ser rescindido por cualquiera de las partes.
-            </p>
-        </div>
-
-        <div class="mt-lg-5">
-            <p><strong>VENDEDOR</strong></p>
-            <p>
-                Firma: ________________________
-            </p>
-            <p>
-                Nombre: _______________________
-            </p>
-
-            <p><strong>ANUNCIANTE</strong></p>
-            <p>
-                Nombre: _______________________
-            </p>
-        </div>
-
+    <div class="datos">
+        <p><strong>Ciudad y Fecha de emisión:</strong> Florencia, @DateTime.Now.ToString("dd/MM/yyyy")</p>
+        <p><strong>Número de contrato:</strong>@Model.Id</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <div class="datos">
+        <p><strong>Vendedor:</strong> @Model.NombreVendedor</p>
+        <p><strong>Documento:</strong> @Model.DocumentoVendedor</p>
+    </div>
+
+    <div class="datos">
+        <p><strong>Anunciante:</strong> @Model.NombreAnunciante</p>
+        <p><strong>Documento:</strong> @Model.DocumentoAnunciante</p>
+    </div>
+
+    <div class="datos">
+        <p><strong>Cantidad de cuñas:</strong> @ViewBag.num</p>
+        <p><strong>Valor del contrato:</strong> $@valorFormateado</p>
+        <p><strong>Fecha de inicio:</strong> @Model.FechaInicio</p>
+        <p><strong>Fecha de finalización:</strong> @Model.FechaFin</p>
+    </div>
+
+    <div class="seccion">
+        <h3>CLÁUSULAS</h3>
+
+        <p><strong>Primera - Objeto:</strong> El presente contrato tiene por objeto la difusión de cuñas radiales del anunciante en los programas acordados de la emisora.</p>
+
+        <p><strong>Segunda - Duración:</strong> El contrato tendrá vigencia desde la fecha de inicio hasta la fecha de terminación indicadas anteriormente.</p>
+
+        <p><strong>Tercera - Obligaciones del Vendedor:</strong> El Vendedor se compromete a emitir las cuñas en los espacios acordados, garantizando la calidad y fidelidad del contenido proporcionado.</p>
+
+        <p><strong>Cuarta - Obligaciones del Anunciante:</strong> El Anunciante entregará el material publicitario y realizará el pago según los términos acordados.</p>
+
+        <p><strong>Quinta - Modificaciones:</strong> Toda modificación debe ser formalizada por escrito y firmada por ambas partes.</p>
+
+        <p><strong>Sexta - Terminación Anticipada:</strong> El contrato podrá darse por terminado por mutuo acuerdo o por incumplimiento de alguna de las partes.</p>
+    </div>
+
+    <div class="firmas">
+        <div>
+            <p><strong>VENDEDOR</strong></p>
+            <p>_________________________</p>
+            <p>Nombre: __________________</p>
+        </div>
+        <div>
+            <p><strong>ANUNCIANTE</strong></p>
+            <p>_________________________</p>
+            <p>Nombre: __________________</p>
+        </div>
+    </div>
 
 </body>
 </html>
-

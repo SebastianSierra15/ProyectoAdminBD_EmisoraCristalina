@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace RadioDemo.Controllers
 {
 
-    [Authorize(Roles = "Gestionar Anunciante")]
+    [Authorize(Roles = "Consultar Anunciante")]
     public class AnuncianteController : Controller
     {
         Procedimientos cn = new Procedimientos();
@@ -34,6 +34,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editar Anunciante")]
         public ActionResult Editar(string nit, string nombre, string direccion, string telefono, string nombre1, string nombre2, string apellido1, string apellido2, string correo)
         {
             cn.EditarAnunciante(nit, nombre, direccion.ToUpper(), telefono, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo);
@@ -42,6 +43,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Agregar Anunciante")]
         public ActionResult Agregar(string nit, string nombre, string direccion, string telefono, string tipoDocumento, string documento, string nombre1, string nombre2, string apellido1, string apellido2, string fecha, string correo, string genero)
         {
             cn.AgregarAnunciante(nit, nombre, direccion.ToUpper(), telefono, tipoDocumento, documento, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), fecha, correo, genero);

@@ -1,10 +1,59 @@
 ﻿@{
-    ViewData["Title"] = "Inicio";
+    ViewData["Title"] = "Radio Demo";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-center" style="margin-top: 100px;">Bienvenido</h1>
+<div class="container text-center" style="margin-top: 100px;">
+    <h1 class="mb-3">Bienvenido</h1>
+    <p class="text-muted mb-4">Hola, @User.Identity.Name 👋 Bienvenido de nuevo a Radio Demo</p>
 
-<div class="text-center mt-lg-5">
-    <a class="btn btn-outline-secondary id="contrato" href="@Url.Action("CrearContrato", "Contrato")">Crear Contrato</a>
+    <a class="btn btn-primary btn-lg shadow-sm" href="@Url.Action("CrearContrato", "Contrato")">
+        <i class='bx bx-plus-medical'></i> Crear Contrato
+    </a>
+</div>
+
+<div class="container mt-4">
+    <div class="row text-center">
+        <div class="col-12 col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class='bx bx-folder display-4 text-secondary mb-2'></i>
+                    <h5 class="card-title">Contratos Activos</h5>
+                    <p class="display-6 text-primary fw-bold">@ViewBag.ContratosActivos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class='bx bx-user display-4 text-secondary mb-2'></i>
+                    <h5 class="card-title">Anunciantes</h5>
+                    <p class="display-6 text-primary fw-bold">@ViewBag.TotalAnunciantes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class='bx bx-id-card display-4 text-secondary mb-2'></i>
+                    <h5 class="card-title">Vendedores</h5>
+                    <p class="display-6 text-primary fw-bold">@ViewBag.TotalVendedores</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-center mt-3 text-muted">Accesos rápidos</h4>
+
+    <div class="d-flex justify-content-center gap-3 mt-3 mb-5">
+        <a href="@Url.Action("Index", "Anunciante")" class="btn btn-outline-secondary">
+            <i class='bx bx-user'></i> Anunciantes
+        </a>
+        <a href="@Url.Action("Index", "Vendedor")" class="btn btn-outline-secondary">
+            <i class='bx bx-id-card'></i> Vendedores
+        </a>
+        <a href="@Url.Action("Index", "Contrato")" class="btn btn-outline-secondary">
+            <i class='bx bx-file'></i> Contratos
+        </a>
+    </div>
 </div>

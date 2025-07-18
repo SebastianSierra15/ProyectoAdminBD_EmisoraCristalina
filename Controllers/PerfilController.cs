@@ -13,7 +13,7 @@ namespace RadioDemo.Controllers
 
         public IActionResult Index()
         {
-            var user = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            var user = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             VendedorModel vendedor = cn.BuscarVendedor(user + "");
 
@@ -21,6 +21,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editar Perfil")]
         public ActionResult Editar(string id, string username, string nombre1, string nombre2, string apellido1, string apellido2, string correo, string contrasenia)
         {
             cn.EditarPerfil(id, username, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo, contrasenia);

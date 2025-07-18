@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RadioDemo.Data;
 using RadioDemo.Models;
-using System.Data;
 using Microsoft.AspNetCore.Authorization;
 
 namespace RadioDemo.Controllers
 {
-    [Authorize(Roles = "Gestionar Vendedor")]
+    [Authorize(Roles = "Consultar Vendedor")]
     public class VendedorController : Controller
     {
         Procedimientos cn = new Procedimientos();
@@ -36,6 +35,7 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Editar Vendedor")]
         public ActionResult Editar(string id, string username, string estado, string rol, string nombre1, string nombre2, string apellido1, string apellido2, string correo)
         {
             cn.EditarVendedor(id, username, estado, rol, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), correo);
@@ -44,12 +44,12 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Agregar Vendedor")]
         public ActionResult Agregar(string username, string rol, string tipoDocumento, string documento, string nombre1, string nombre2, string apellido1, string apellido2, string fecha, string correo, string genero)
         {
             cn.AgregarVendedor(username, rol, tipoDocumento, documento, nombre1.ToUpper(), (nombre2 != null ? nombre2.ToUpper() : null), apellido1.ToUpper(), (apellido2 != null ? apellido2.ToUpper() : null), fecha, correo, genero);
 
             return RedirectToAction("Index", "Vendedor");
         }
-
     }
 }

@@ -1,7 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using System.Data;
-using System.Reflection;
-using System.Runtime.Intrinsics.X86;
 
 namespace RadioDemo.Data
 {
@@ -14,7 +11,7 @@ namespace RadioDemo.Data
         {
             try
             {
-                connection = new MySqlConnection("Server=localhost;Port=3306;Database=emisora_cristalina;Uid=root;Pwd=root");
+                connection = new MySqlConnection("Server=localhost;Port=3306;Database=radio_demo;Uid=root;Pwd=root");
                 connection.Open();
             }
             catch (Exception e)

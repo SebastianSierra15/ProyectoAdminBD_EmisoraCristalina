@@ -4,9 +4,11 @@ using RadioDemo.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RadioDemo.Controllers
 {
+    [AllowAnonymous]
     public class LoginController : Controller
     {
 
@@ -30,7 +32,8 @@ namespace RadioDemo.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, vendedor.Id + ""),
+                    new Claim(ClaimTypes.NameIdentifier, vendedor.Id.ToString()),
+                    new Claim(ClaimTypes.Name, vendedor.Username),
                     new Claim(ClaimTypes.Actor, vendedor.Rol.Id + "")
                 };
 
@@ -45,7 +48,7 @@ namespace RadioDemo.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewData["Mensaje"] = "Hubo un problema";
+            TempData["Mensaje"] = "Usuario o contraseña incorrectos.";
             return RedirectToAction("Index", "Login");
         }
 

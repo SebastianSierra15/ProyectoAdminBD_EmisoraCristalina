@@ -1,6 +1,13 @@
 ﻿@{
-    ViewData["Title"] = "Contrato";
+    ViewData["Title"] = "Contrato - Radio Demo";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="top:90px; left:50%; transform:translateX(-50%); width:max-content;">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
 }
 
 <h1 class="text-center" style="margin-top: 100px;">Contrato Nuevo</h1>
@@ -39,21 +46,25 @@
 
             <div class="col">
                 <label for="valor" class="form-label"><strong>Costo final del contrato</strong></label>
-                <input type="number" class="form-control" id="valor" name="valor" readonly>
+                <input type="text" class="form-control" id="valorVisible" readonly>
+                <input type="hidden" id="valor" name="valor" value="0">
             </div>
         </div>
 
-        <div class="text-center row mt-5">
-            <button id="btnCrearCunia" type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#agregar" disabled>Agregar Cuña</button>
+        <div class="d-flex justify-content-center mt-5">
+            <button id="btnCrearCunia" type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#agregar" disabled>
+                Agregar Cuña
+            </button>
         </div>
 
         <div class="row mt-3">
             <table class="table table-hover table-bordered table-responsive mt-4" id="tabla">
-                <thead>
+                <thead class="table-light">
                     <tr>
                         <th scope="col" class="text-center">Nombre</th>
                         <th scope="col" class="text-center">Descripción</th>
                         <th scope="col" class="text-center">Tarifa</th>
+                        <th scope="col" class="text-center">Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,13 +74,13 @@
     </form>
 </div>
 
-<div class="text-center mt-5">
-    <a class="btn btn-outline-danger mt-3" href="@Url.Action("Index", "Home")">
+<div class="text-center mt-5 mb-4">
+    <a class="btn btn-secondary mt-3" href="@Url.Action("Index", "Home")">
         Cancelar
     </a>
 
-    <button id="btnCrear" class="btn btn-outline-primary mt-3" form="edit" type="submit">
-        Crear
+    <button id="btnCrear" class="btn btn-success mt-3" form="edit" type="submit">
+        Crear Contrato
     </button>
 </div>
 
@@ -105,7 +116,9 @@
                                 <select class="form-select" id="tarifa" name="tarifa" required>
                                     @foreach (TarifaModel tarifa in ViewBag.tarifas)
                                     {
-                                        <option value="@tarifa.Id">@tarifa.Programa.Nombre $@tarifa.ValorEspecial (@tarifa.RangoInicial sg - @tarifa.RangoFinal sg)</option>
+                                        var valorFormatted = string.Format(new System.Globalization.CultureInfo("es-CO"), "{0:N0}", tarifa.ValorEspecial);
+                                        
+                                        <option value="@tarifa.Id">@tarifa.Programa.Nombre $@valorFormatted (@tarifa.RangoInicial sg - @tarifa.RangoFinal sg)</option>
                                     }
                                 </select>
                             </div>
@@ -118,6 +131,30 @@
                 <button type="button" class="btn btn-success" onclick="validarYAgregarCunia()">Aceptar</button>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmarContratoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Confirmar contrato</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas crear este contrato con <strong id="cantidad-cunias"></strong> cuña(s)?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btn-sm" id="btnConfirmarContrato">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
     </div>
 </div>
 
@@ -152,18 +189,24 @@
 
     function agregarCunia(result) {
         valor += result.valorEspecial * dias;
-        inputValor.value = valor + "";
+
+        inputValor.value = valor;
+        document.getElementById("valorVisible").value = new Intl.NumberFormat("es-CO").format(valor);
 
         const nombre = document.getElementById('nombreCunia').value;
         const descripcion = document.getElementById('descripcionCunia').value;
+        const precioFormateado = new Intl.NumberFormat("es-CO").format(result.valorEspecial);
         const fila = `<tr>
-                <td scope="row">${nombre}</td>
-                <td>${descripcion}</td>
-                <td>${result.programa.nombre} $${result.valorEspecial} (${result.rangoInicial}sg - ${result.rangoFinal}sg)</td>
-                <input type="hidden" name="cunia[][nombre]" value="${nombre}"/>
-                <input type="hidden" name="cunia[][descripcion]" value="${descripcion}"/>
-                <input type="hidden" name="cunia[][tarifa]" value="${result.id}"/>
-            <tr>`;
+            <td scope="row">${nombre}</td>
+            <td>${descripcion}</td>
+            <td>${result.programa.nombre} $${precioFormateado} (${result.rangoInicial}sg - ${result.rangoFinal}sg)</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-danger btn-remove-cunia">Eliminar</button>
+            </td>
+            <input type="hidden" name="cunia[][nombre]" value="${nombre}"/>
+            <input type="hidden" name="cunia[][descripcion]" value="${descripcion}"/>
+            <input type="hidden" name="cunia[][tarifa]" value="${result.id}"/>
+        </tr>`;
 
         tabla.insertAdjacentHTML('beforeend', fila)
         document.getElementById('crear').reset();
@@ -198,14 +241,22 @@
     }
 
     document.getElementById('btnCrear').addEventListener('click', function (event) {
+        event.preventDefault();
         const filas = tabla.getElementsByTagName('tr');
         if (filas.length === 0) {
-            event.preventDefault();
-            alert("Debe agregar al menos una cuña antes de enviar el formulario.");
-        } else {
-            inputFechaFin.disabled = false;
-            inputFechaInicio.disabled = false;
+            alert("Debe agregar al menos una cuña antes de crear el contrato.");
+            return;
         }
+
+        document.getElementById("cantidad-cunias").textContent = filas.length;
+        const modalConfirm = new bootstrap.Modal(document.getElementById('confirmarContratoModal'));
+        modalConfirm.show();
+    });
+
+    document.getElementById('btnConfirmarContrato').addEventListener('click', function () {
+        inputFechaFin.disabled = false;
+        inputFechaInicio.disabled = false;
+        document.getElementById('edit').submit();
     });
 
     function buscarTarifa(id) {
@@ -224,4 +275,31 @@
         });
     }
 
+    tabla.addEventListener("click", function (e) {
+        if (e.target.classList.contains("btn-remove-cunia")) {
+            const fila = e.target.closest("tr");
+
+            const precioTexto = fila.querySelector("td:nth-child(3)").textContent.match(/\$(\d+(?:\.\d{3})*)/);
+            const precio = parseInt(precioTexto[1].replace(/\./g, ''));
+            valor -= precio * dias;
+            inputValor.value = new Intl.NumberFormat("es-CO").format(valor);
+
+            fila.remove();
+        }
+    });
+
+        document.getElementById('btnConfirmarContrato').addEventListener('click', function () {
+        inputFechaFin.disabled = false;
+        inputFechaInicio.disabled = false;
+
+        // Mostrar overlay de carga
+        const overlay = document.getElementById("loadingOverlay");
+        overlay.style.display = "flex";
+
+        // Bloquear pantalla
+        document.body.style.overflow = "hidden";
+
+        // Enviar formulario
+        document.getElementById('edit').submit();
+    });
 </script>
