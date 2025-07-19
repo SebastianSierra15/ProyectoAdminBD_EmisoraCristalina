@@ -3,11 +3,14 @@ using RadioDemo.Data;
 using RadioDemo.Models;
 using System.Security.Claims;
 using DinkToPdf;
-using Microsoft.AspNetCore.Http.Extensions;
 using DinkToPdf.Contracts;
 using WebReservas.Data;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace RadioDemo.Controllers
 {
@@ -38,7 +41,7 @@ namespace RadioDemo.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Crear Contrato")]
+        [Authorize(Roles = "Agregar Contrato")]
         public IActionResult CrearContrato()
         {
             List<AnuncianteModel> anunciante = cn.RecopilarAnunciantes();
@@ -60,8 +63,8 @@ namespace RadioDemo.Controllers
             return View(contrato);
         }
 
-        [Authorize(Roles = "Crear Contrato")]
-        public IActionResult Crear(IFormCollection form)
+        [Authorize(Roles = "Agregar Contrato")]
+        public async Task<IActionResult> Crear(IFormCollection form)
         {
             var nombre = form["nombre"];
             var valor = form["valor"];
@@ -109,7 +112,7 @@ namespace RadioDemo.Controllers
                 return RedirectToAction("CrearContrato");
             }
 
-            var user = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            var user = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             int numCunias = cuniasNombre.Count;
             string id = cn.AgregarContrato(nombre, fechaInicio.ToString("yyyy-MM-dd"), fechaFin.ToString("yyyy-MM-dd"), anunciante, valor, user, numCunias);
@@ -121,10 +124,11 @@ namespace RadioDemo.Controllers
 
             string idView = (id + "," + cuniasNombre.Count);
 
-            string pagina_actual = HttpContext.Request.Path;
-            string url_pagina = HttpContext.Request.GetEncodedUrl();
-            url_pagina = url_pagina.Replace(pagina_actual, "");
-            url_pagina = $"{url_pagina}/Contrato/VistaPDF/{idView}";
+            // Renderizar HTML localmente
+            ContratoModel contrato = cn.BuscarContrato(id);
+            ViewBag.num = cuniasNombre.Count;
+
+            string htmlContent = await RenderViewAsync("VistaPDF", contrato, false);
 
             var pdf = new HtmlToPdfDocument()
             {
@@ -137,11 +141,14 @@ namespace RadioDemo.Controllers
                 {
                     new ObjectSettings()
                     {
-                        Page=url_pagina
+                        HtmlContent = htmlContent
                     }
                 }
             };
+
             byte[] archivoPDF = _converter.Convert(pdf);
+
+
             string nombrePDF = "Contrato.pdf";
             var file = File(archivoPDF, "application/pdf", nombrePDF);
 
@@ -166,12 +173,37 @@ namespace RadioDemo.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Crear Contrato")]
+        [Authorize(Roles = "Agregar Contrato")]
         public IActionResult BuscarTarifa(string id)
         {
             TarifaModel tarifa = cn.BuscarTarifa(id);
 
             return Json(tarifa);
+        }
+
+        private async Task<string> RenderViewAsync<TModel>(string viewName, TModel model, bool partial = false)
+        {
+            ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                var engine = HttpContext.RequestServices.GetService(typeof(IRazorViewEngine)) as IRazorViewEngine;
+                var viewResult = engine.FindView(ControllerContext, viewName, !partial);
+
+                if (!viewResult.Success)
+                    throw new InvalidOperationException($"No se pudo encontrar la vista {viewName}");
+
+                var viewContext = new ViewContext(
+                    ControllerContext,
+                    viewResult.View,
+                    ViewData,
+                    TempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+
+                await viewResult.View.RenderAsync(viewContext);
+                return sw.GetStringBuilder().ToString();
+            }
         }
     }
 }

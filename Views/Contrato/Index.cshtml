@@ -56,7 +56,11 @@
     </table>
 </div>
 
-<div class="text-center mb-4">
-    <a class="btn btn-primary" id="contrato" href="@Url.Action("CrearContrato", "Contrato")"><i class="bx bx-plus"></i>Crear Contrato</a>
-</div>
-
+@if (User.IsInRole("Agregar Contrato"))
+{
+    <div class="text-center mb-4">
+        <a class="btn btn-primary" id="contrato" href="@Url.Action("CrearContrato", "Contrato")">
+            <i class="bx bx-plus"></i>Crear Contrato
+        </a>
+    </div>
+}

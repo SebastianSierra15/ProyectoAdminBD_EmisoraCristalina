@@ -1,11 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI.Relational;
 using System.Data;
-using System.Runtime.Intrinsics.X86;
-using System.Transactions;
 using RadioDemo.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics.Contracts;
 
 namespace RadioDemo.Data
 {
@@ -1036,7 +1031,7 @@ namespace RadioDemo.Data
             return;
         }
 
-        public void EditarPerfil(string id, string username, string nombre1, string nombre2, string apellido1, string apellido2, string correo, string contrasenia)
+        public void EditarPerfil(string id, string username, string nombre1, string nombre2, string apellido1, string apellido2, string correo)
         {
             Conectar();
 
@@ -1050,7 +1045,6 @@ namespace RadioDemo.Data
                 cmd.Parameters.AddWithValue("apellido1", apellido1);
                 cmd.Parameters.AddWithValue("apellido2", apellido2);
                 cmd.Parameters.AddWithValue("correo", correo);
-                cmd.Parameters.AddWithValue("contrasenia", contrasenia);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 MySqlDataReader dr = cmd.ExecuteReader();
             }
@@ -1114,5 +1108,57 @@ namespace RadioDemo.Data
             return;
         }
 
+        public bool ValidarContrasenia(string id, string contraseniaActual)
+        {
+            Conectar();
+            bool esValida = false;
+
+            try
+            {
+                cmd = new MySqlCommand("ValidarContrasenia", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("IdVendedor", id);
+                cmd.Parameters.AddWithValue("Contrasenia", contraseniaActual);
+
+                object result = cmd.ExecuteScalar();
+
+                if (result != null && Convert.ToInt32(result) == 1)
+                {
+                    esValida = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error validando contraseña: " + e.Message);
+            }
+            finally
+            {
+                Desconectar();
+            }
+
+            return esValida;
+        }
+
+        public void ActualizarContrasenia(string id, string nuevaContrasenia)
+        {
+            Conectar();
+
+            try
+            {
+                cmd = new MySqlCommand("ActualizarContrasenia", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("IdVendedor", id);
+                cmd.Parameters.AddWithValue("NuevaContrasenia", nuevaContrasenia);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error actualizando contraseña: " + e.Message);
+            }
+            finally
+            {
+                Desconectar();
+            }
+        }
     }
 }

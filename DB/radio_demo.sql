@@ -19,6 +19,23 @@
 CREATE DATABASE IF NOT EXISTS `radio_demo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `radio_demo`;
 
+-- Volcando estructura para procedimiento radio_demo.ActualizarContrasenia
+DELIMITER //
+CREATE PROCEDURE `ActualizarContrasenia`(
+	IN `idVendedor` INT,
+	IN `nuevaContrasenia` VARCHAR(200)
+)
+BEGIN
+
+	UPDATE vendedor v
+	SET
+		v.CONTRASENIA_VENDEDOR = SHA2(nuevaContrasenia, 256)
+	WHERE
+		v.ID_VENDEDOR = idVendedor;
+		
+END//
+DELIMITER ;
+
 -- Volcando estructura para procedimiento radio_demo.AgregarAnunciante
 DELIMITER //
 CREATE PROCEDURE `AgregarAnunciante`(
@@ -149,13 +166,16 @@ CREATE TABLE IF NOT EXISTS `anunciante` (
   `FK_DOCUMENTO_PERSONA` int NOT NULL,
   PRIMARY KEY (`NIT_ANUNCIANTE`),
   KEY `FK_PERSONA_ANUNCIANTE` (`FK_DOCUMENTO_PERSONA`),
-  CONSTRAINT `FK_PERSONA_ANUNCIANTE` FOREIGN KEY (`FK_DOCUMENTO_PERSONA`) REFERENCES `persona` (`DOCUMENTO_PERSONA`)
+  CONSTRAINT `FK_PERSONA_ANUNCIANTE` FOREIGN KEY (`FK_DOCUMENTO_PERSONA`) REFERENCES `persona` (`DOCUMENTO_PERSONA`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.anunciante: ~2 rows (aproximadamente)
 INSERT INTO `anunciante` (`NIT_ANUNCIANTE`, `NOMBRE_ANUNCIANTE`, `DIRECCION_ANUNCIANTE`, `TELEFONO_ANUNCIANTE`, `FK_DOCUMENTO_PERSONA`) VALUES
-	(1, 'EXITO!', 'CENTRO', '311111111', 456),
-	(1111111, 'Intermoda', 'CENTRO', '32222222', 111111111);
+	(900001001, 'Alimentos San Jorge', 'Calle 10 #12-34', '3101234567', 10101010),
+	(900001002, 'Publicidad Total', 'Cra 8 #45-67', '3129876543', 20202020),
+	(900001003, 'Medios Express', 'Av. Siempre Viva #123', '3114567890', 30303030),
+	(900001004, 'Comunicaciones Zeta', 'Calle 23 #4-56', '3131112222', 40404040),
+	(900001005, 'Eventos y Más', 'Cra 18 #7-89', '3208889999', 50505050);
 
 -- Volcando estructura para tabla radio_demo.auditoriaeliminartarifa
 CREATE TABLE IF NOT EXISTS `auditoriaeliminartarifa` (
@@ -163,12 +183,9 @@ CREATE TABLE IF NOT EXISTS `auditoriaeliminartarifa` (
   `TARIFA_AUDITORIAELIMINARTARIFA` int NOT NULL,
   `FECHA_AUDITORIAELIMINARTARIFA` datetime NOT NULL,
   PRIMARY KEY (`ID_AUDITORIAELIMINARTARIFA`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.auditoriaeliminartarifa: ~2 rows (aproximadamente)
-INSERT INTO `auditoriaeliminartarifa` (`ID_AUDITORIAELIMINARTARIFA`, `TARIFA_AUDITORIAELIMINARTARIFA`, `FECHA_AUDITORIAELIMINARTARIFA`) VALUES
-	(1, 9, '2024-05-26 23:20:32'),
-	(2, 6, '2025-07-17 10:30:17');
 
 -- Volcando estructura para procedimiento radio_demo.BuscarAnunciante
 DELIMITER //
@@ -238,7 +255,7 @@ DELIMITER ;
 -- Volcando estructura para procedimiento radio_demo.BuscarVendedor
 DELIMITER //
 CREATE PROCEDURE `BuscarVendedor`(
-	IN id INT
+	IN `id` INT
 )
 BEGIN
 	
@@ -252,7 +269,8 @@ BEGIN
 	INNER JOIN tipodocumento ON persona.FK_ID_TIPODOCUMENTO = tipodocumento.ID_TIPODOCUMENTO
 	INNER JOIN genero ON persona.FK_ID_GENERO = genero.ID_GENERO
 	INNER JOIN rol ON vendedor.FK_ID_ROL = rol.ID_ROL
-	WHERE vendedor.ID_VENDEDOR = id;
+	WHERE vendedor.ID_VENDEDOR = id
+	AND vendedor.FK_ID_ROL != 1;
 	
 END//
 DELIMITER ;
@@ -272,13 +290,17 @@ CREATE TABLE IF NOT EXISTS `contrato` (
   PRIMARY KEY (`ID_CONTRATO`),
   KEY `FK_VENDEDOR_CONTRATO` (`FK_ID_VENDEDOR`),
   KEY `FK_ANUNCIANTE_CONTRATO` (`FK_NIT_ANUNCIANTE`),
-  CONSTRAINT `FK_ANUNCIANTE_CONTRATO` FOREIGN KEY (`FK_NIT_ANUNCIANTE`) REFERENCES `anunciante` (`NIT_ANUNCIANTE`),
-  CONSTRAINT `FK_VENDEDOR_CONTRATO` FOREIGN KEY (`FK_ID_VENDEDOR`) REFERENCES `vendedor` (`ID_VENDEDOR`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_ANUNCIANTE_CONTRATO` FOREIGN KEY (`FK_NIT_ANUNCIANTE`) REFERENCES `anunciante` (`NIT_ANUNCIANTE`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_VENDEDOR_CONTRATO` FOREIGN KEY (`FK_ID_VENDEDOR`) REFERENCES `vendedor` (`ID_VENDEDOR`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.contrato: ~1 rows (aproximadamente)
 INSERT INTO `contrato` (`ID_CONTRATO`, `NOMBRE_CONTRATO`, `FECHAINICIO_CONTRATO`, `FECHAFIN_CONTRATO`, `FECHACREACION_CONTRATO`, `VALORTOTAL_CONTRATO`, `NUMEROCUNIAS_CONTRATO`, `PDF_CONTRATO`, `FK_ID_VENDEDOR`, `FK_NIT_ANUNCIANTE`) VALUES
-	(55, 'Contrato Nuevo', '2025-07-18', '2025-08-17', '2025-07-17 18:28:41', 663000, 2, '6879873f28211b0724a1ec95', 1, 1);
+	(1, 'Contrato Radio Uno', '2025-07-01', '2025-12-31', '2025-07-18 22:04:02', 15600000, 3, '687b0b227f14f4e5110d2101', 1, 900001001),
+	(2, 'Contrato Publicidad Express', '2025-06-15', '2025-08-15', '2025-05-19 22:05:23', 9900000, 2, '687b0b747f14f4e5110d2102', 1, 900001002),
+	(3, 'Contrato Temporada Verano', '2025-07-10', '2025-09-10', '2025-06-18 22:06:31', 11700000, 2, '687b0bb77f14f4e5110d2103', 1, 900001003),
+	(4, 'Contrato Navidad', '2025-11-01', '2025-12-31', '2025-08-08 22:07:14', 10500000, 2, '687b0be27f14f4e5110d2104', 1, 900001004),
+	(5, 'Contrato Promoción 2025', '2025-05-01', '2025-10-01', '2025-04-18 22:07:42', 3000000, 1, '687b0bfe7f14f4e5110d2105', 1, 900001005);
 
 -- Volcando estructura para tabla radio_demo.cunia
 CREATE TABLE IF NOT EXISTS `cunia` (
@@ -291,13 +313,22 @@ CREATE TABLE IF NOT EXISTS `cunia` (
   PRIMARY KEY (`ID_CUNIA`),
   KEY `FK_TARIFA_CUNIA` (`FK_ID_TARIFA`),
   KEY `FK_CONTRATO_CUNIA` (`FK_ID_CONTRATO`),
-  CONSTRAINT `FK_CONTRATO_CUNIA` FOREIGN KEY (`FK_ID_CONTRATO`) REFERENCES `contrato` (`ID_CONTRATO`),
-  CONSTRAINT `FK_TARIFA_CUNIA` FOREIGN KEY (`FK_ID_TARIFA`) REFERENCES `tarifa` (`ID_TARIFA`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_CONTRATO_CUNIA` FOREIGN KEY (`FK_ID_CONTRATO`) REFERENCES `contrato` (`ID_CONTRATO`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_TARIFA_CUNIA` FOREIGN KEY (`FK_ID_TARIFA`) REFERENCES `tarifa` (`ID_TARIFA`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.cunia: ~0 rows (aproximadamente)
 INSERT INTO `cunia` (`ID_CUNIA`, `NOMBRE_CUNIA`, `DESCRIPCION_CUNIA`, `ESTADO_CUNIA`, `FK_ID_TARIFA`, `FK_ID_CONTRATO`) VALUES
-	(56, 'Cunia 1', 'Cuniaaaaa', 1, 1, 55);
+	(1, 'Cuña A1', 'Publicidad de café premium en Radio Uno.', 1, 1, 1),
+	(2, 'Cuña A2', 'Promoción del mes para nuevos clientes.', 1, 2, 1),
+	(3, 'Cuña A3', 'Cuña institucional para posicionamiento.', 1, 3, 1),
+	(4, 'Cuña B1', 'Anuncio de heladería local.', 1, 6, 2),
+	(5, 'Cuña B2', 'Descuento 2x1 en productos seleccionados.', 1, 7, 2),
+	(6, 'Cuña C1', 'Campaña verano segura - protección solar.', 1, 9, 3),
+	(7, 'Cuña C2', 'Ropa ligera en descuento.', 1, 10, 3),
+	(8, 'Contrato Navidad', 'Descuentos de temporada navideña.', 1, 4, 4),
+	(9, 'Cuña D2', 'Regalos para toda la familia.', 1, 5, 4),
+	(10, 'Cuña E1', 'Nuevo servicio de entrega rápida.', 1, 8, 5);
 
 -- Volcando estructura para procedimiento radio_demo.EditarAnunciante
 DELIMITER //
@@ -326,19 +357,18 @@ DELIMITER ;
 -- Volcando estructura para procedimiento radio_demo.EditarPerfil
 DELIMITER //
 CREATE PROCEDURE `EditarPerfil`(
-	IN id INT,
-	IN username VARCHAR(50),
-	IN nombre1 VARCHAR(50),
-	IN nombre2 VARCHAR(50),
-	IN apellido1 VARCHAR(50),
-	IN apellido2 VARCHAR(50),
-	IN correo VARCHAR(100),
-	IN contrasenia VARCHAR(50)
+	IN `id` INT,
+	IN `username` VARCHAR(50),
+	IN `nombre1` VARCHAR(50),
+	IN `nombre2` VARCHAR(50),
+	IN `apellido1` VARCHAR(50),
+	IN `apellido2` VARCHAR(50),
+	IN `correo` VARCHAR(100)
 )
 BEGIN
 	
 	UPDATE vendedor, persona
-	SET vendedor.USERNAME_VENDEDOR = username, vendedor.CONTRASENIA_VENDEDOR = contrasenia,
+	SET vendedor.USERNAME_VENDEDOR = username,
 	persona.NOMBRE1_PERSONA = nombre1, persona.NOMBRE2_PERSONA = nombre2, persona.APELLIDO1_PERSONA = apellido1, persona.APELLIDO2_PERSONA = apellido2, persona.CORREO_PERSONA = correo
 	WHERE vendedor.ID_VENDEDOR = id
 	AND persona.DOCUMENTO_PERSONA = vendedor.FK_DOCUMENTO_PERSONA;
@@ -453,15 +483,27 @@ CREATE TABLE IF NOT EXISTS `permiso` (
   `ID_PERMISO` int NOT NULL AUTO_INCREMENT,
   `NOMBRE_PERMISO` varchar(50) NOT NULL,
   PRIMARY KEY (`ID_PERMISO`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.permiso: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.permiso: ~17 rows (aproximadamente)
 INSERT INTO `permiso` (`ID_PERMISO`, `NOMBRE_PERMISO`) VALUES
-	(1, 'Gestionar Contrato'),
-	(2, 'Gestionar Programa'),
-	(3, 'Gestionar Tarifa'),
-	(4, 'Gestionar Vendedor'),
-	(5, 'Gestionar Anunciante');
+	(1, 'Consultar Contrato'),
+	(2, 'Consultar Programa'),
+	(3, 'Consultar Tarifa'),
+	(4, 'Consultar Vendedor'),
+	(5, 'Consultar Anunciante'),
+	(6, 'Editar Contrato'),
+	(7, 'Editar Programa'),
+	(8, 'Editar Tarifa'),
+	(9, 'Editar Vendedor'),
+	(10, 'Editar Anunciante'),
+	(11, 'Agregar Contrato'),
+	(12, 'Agregar Programa'),
+	(13, 'Agregar Tarifa'),
+	(14, 'Agregar Vendedor'),
+	(15, 'Agregar Anunciante'),
+	(16, 'Eliminar Tarifa'),
+	(17, 'Editar Perfil');
 
 -- Volcando estructura para tabla radio_demo.permisorol
 CREATE TABLE IF NOT EXISTS `permisorol` (
@@ -471,11 +513,11 @@ CREATE TABLE IF NOT EXISTS `permisorol` (
   PRIMARY KEY (`ID_PERMISOROL`),
   KEY `FK_ROL_PERMISOROL` (`FK_ID_ROL`),
   KEY `FK_PERMISO_PERMISOROL` (`FK_ID_PERMISO`),
-  CONSTRAINT `FK_PERMISO_PERMISOROL` FOREIGN KEY (`FK_ID_PERMISO`) REFERENCES `permiso` (`ID_PERMISO`),
-  CONSTRAINT `FK_ROL_PERMISOROL` FOREIGN KEY (`FK_ID_ROL`) REFERENCES `rol` (`ID_ROL`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_PERMISO_PERMISOROL` FOREIGN KEY (`FK_ID_PERMISO`) REFERENCES `permiso` (`ID_PERMISO`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_ROL_PERMISOROL` FOREIGN KEY (`FK_ID_ROL`) REFERENCES `rol` (`ID_ROL`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.permisorol: ~7 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.permisorol: ~19 rows (aproximadamente)
 INSERT INTO `permisorol` (`ID_PERMISOROL`, `FK_ID_ROL`, `FK_ID_PERMISO`) VALUES
 	(1, 1, 1),
 	(2, 1, 2),
@@ -483,7 +525,29 @@ INSERT INTO `permisorol` (`ID_PERMISOROL`, `FK_ID_ROL`, `FK_ID_PERMISO`) VALUES
 	(4, 1, 4),
 	(5, 1, 5),
 	(6, 2, 1),
-	(7, 2, 5);
+	(7, 2, 5),
+	(8, 1, 15),
+	(9, 1, 11),
+	(10, 1, 12),
+	(11, 1, 13),
+	(12, 1, 14),
+	(13, 1, 10),
+	(14, 1, 6),
+	(15, 1, 7),
+	(16, 1, 8),
+	(17, 1, 9),
+	(18, 1, 16),
+	(19, 1, 17),
+	(20, 2, 11),
+	(21, 2, 15),
+	(22, 2, 10),
+	(23, 3, 11),
+	(24, 3, 5),
+	(25, 3, 1),
+	(26, 3, 2),
+	(27, 3, 3),
+	(28, 3, 4),
+	(29, 2, 17);
 
 -- Volcando estructura para tabla radio_demo.persona
 CREATE TABLE IF NOT EXISTS `persona` (
@@ -499,18 +563,20 @@ CREATE TABLE IF NOT EXISTS `persona` (
   PRIMARY KEY (`DOCUMENTO_PERSONA`),
   KEY `FK_TIPODOCUMENTO_PERSONA` (`FK_ID_TIPODOCUMENTO`),
   KEY `FK_GENERO_PERSONA` (`FK_ID_GENERO`),
-  CONSTRAINT `FK_GENERO_PERSONA` FOREIGN KEY (`FK_ID_GENERO`) REFERENCES `genero` (`ID_GENERO`),
-  CONSTRAINT `FK_TIPODOCUMENTO_PERSONA` FOREIGN KEY (`FK_ID_TIPODOCUMENTO`) REFERENCES `tipodocumento` (`ID_TIPODOCUMENTO`)
+  CONSTRAINT `FK_GENERO_PERSONA` FOREIGN KEY (`FK_ID_GENERO`) REFERENCES `genero` (`ID_GENERO`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_TIPODOCUMENTO_PERSONA` FOREIGN KEY (`FK_ID_TIPODOCUMENTO`) REFERENCES `tipodocumento` (`ID_TIPODOCUMENTO`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.persona: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.persona: ~8 rows (aproximadamente)
 INSERT INTO `persona` (`DOCUMENTO_PERSONA`, `NOMBRE1_PERSONA`, `NOMBRE2_PERSONA`, `APELLIDO1_PERSONA`, `APELLIDO2_PERSONA`, `FECHANACIMIENTO_PERSONA`, `CORREO_PERSONA`, `FK_ID_TIPODOCUMENTO`, `FK_ID_GENERO`) VALUES
-	(123, 'JHOAN', 'SEBASTIÁN', 'SIERRA', 'PERDOMO', '2002-03-24', 'admin@gmail.com', 1, 1),
-	(456, 'Carolina', NULL, 'Perez', 'Campos', '2004-05-16', 'anunciante1@gmail.com', 2, 2),
-	(22222, 'Johana', NULL, 'Sanchez', 'Plaza', '2008-05-04', 'johana@gmail.com', 3, 2),
-	(222222, 'EMILIO', NULL, 'FIGUEROA', 'FACUNDO', '1999-01-06', 'emilio1234@gmail.com', 1, 1),
-	(2222222, 'EMILIO', NULL, 'FIGUEROA', 'FACUNDO', '1999-01-06', 'emilio123@gmail.com', 1, 1),
-	(111111111, 'CARLOS', 'ENRIQUE', 'ZAPATA', NULL, '2000-12-03', 'carlos@gmail.com', 1, 1);
+	(123, 'Jhoan', 'Sebastián', 'Sierra', 'Perdomo', '2002-03-24', 'admin@radiodemo.com', 1, 1),
+	(10101010, 'Carlos', 'Andrés', 'García', 'López', '1990-05-15', 'carlos.garcia@example.com', 1, 1),
+	(12345678, 'Sebastián', NULL, 'Sierra', NULL, '2002-03-24', 'invitado@radiodemo.com', 1, 1),
+	(15151515, 'Johana', NULL, 'Sanchez', NULL, '2008-05-04', 'empleado@radiodemo.com', 3, 2),
+	(20202020, 'Laura', NULL, 'Martínez', 'Ruiz', '1988-08-22', 'laura.martinez@example.com', 2, 2),
+	(30303030, 'Miguel', 'Ángel', 'Torres', NULL, '1995-12-03', 'miguel.torres@example.com', 1, 1),
+	(40404040, 'Sofía', NULL, 'Ramírez', 'Gómez', '1992-03-10', 'sofia.ramirez@example.com', 1, 2),
+	(50505050, 'Julián', 'Esteban', 'Vargas', 'Mora', '1985-07-29', 'julian.vargas@example.com', 2, 1);
 
 -- Volcando estructura para tabla radio_demo.programa
 CREATE TABLE IF NOT EXISTS `programa` (
@@ -518,13 +584,15 @@ CREATE TABLE IF NOT EXISTS `programa` (
   `NOMBRE_PROGRAMA` varchar(100) NOT NULL,
   `ESTADO_PROGRAMA` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID_PROGRAMA`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.programa: ~3 rows (aproximadamente)
 INSERT INTO `programa` (`ID_PROGRAMA`, `NOMBRE_PROGRAMA`, `ESTADO_PROGRAMA`) VALUES
-	(1, 'Noticiero El Imparcial', 0),
-	(2, 'Pido La Palabra', 1),
-	(3, 'Programación Musical', 1);
+	(1, 'Mañanas Informativas', 1),
+	(2, 'Radio Noticias', 1),
+	(3, 'Música y Café', 1),
+	(4, 'Tarde Deportiva', 0),
+	(5, 'Noche de Rock', 1);
 
 -- Volcando estructura para procedimiento radio_demo.RecopilarAnunciantes
 DELIMITER //
@@ -653,6 +721,7 @@ BEGIN
 	INNER JOIN tipodocumento ON persona.FK_ID_TIPODOCUMENTO = tipodocumento.ID_TIPODOCUMENTO
 	INNER JOIN genero ON persona.FK_ID_GENERO = genero.ID_GENERO
 	INNER JOIN rol ON vendedor.FK_ID_ROL = rol.ID_ROL
+	WHERE vendedor.FK_ID_ROL != 1
 	ORDER BY vendedor.FK_DOCUMENTO_PERSONA ASC;
 	
 END//
@@ -664,12 +733,13 @@ CREATE TABLE IF NOT EXISTS `rol` (
   `NOMBRE_ROL` varchar(50) NOT NULL,
   `ESTADO_ROL` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID_ROL`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.rol: ~2 rows (aproximadamente)
 INSERT INTO `rol` (`ID_ROL`, `NOMBRE_ROL`, `ESTADO_ROL`) VALUES
 	(1, 'Administrador', 1),
-	(2, 'Empleado', 1);
+	(2, 'Empleado', 1),
+	(3, 'Invitado', 1);
 
 -- Volcando estructura para tabla radio_demo.tarifa
 CREATE TABLE IF NOT EXISTS `tarifa` (
@@ -682,19 +752,21 @@ CREATE TABLE IF NOT EXISTS `tarifa` (
   `FK_ID_PROGRAMA` int NOT NULL,
   PRIMARY KEY (`ID_TARIFA`),
   KEY `FK_PROGRAMA_TARIFA` (`FK_ID_PROGRAMA`),
-  CONSTRAINT `FK_PROGRAMA_TARIFA` FOREIGN KEY (`FK_ID_PROGRAMA`) REFERENCES `programa` (`ID_PROGRAMA`)
+  CONSTRAINT `FK_PROGRAMA_TARIFA` FOREIGN KEY (`FK_ID_PROGRAMA`) REFERENCES `programa` (`ID_PROGRAMA`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla radio_demo.tarifa: ~8 rows (aproximadamente)
 INSERT INTO `tarifa` (`ID_TARIFA`, `VALORPUBLICADO_TARIFA`, `VALORREAL_TARIFA`, `RANGOINICIO_TARIFA`, `RANGOFIN_TARIFA`, `ESTADO_TARIFA`, `FK_ID_PROGRAMA`) VALUES
-	(1, 138000, 22100, 15, 15, 1, 1),
-	(2, 172000, 27600, 20, 20, 1, 1),
-	(3, 230000, 36800, 30, 30, 1, 1),
-	(4, 138000, 22100, 15, 15, 1, 2),
-	(5, 172500, 27600, 20, 20, 1, 2),
-	(6, 230000, 36800, 30, 30, 0, 2),
-	(9, 1, 1, 10, 10, 0, 1),
-	(10, 10000001, 10001, 10, 11, 1, 1);
+	(1, 150000, 130000, 10, 20, 1, 1),
+	(2, 200000, 180000, 21, 30, 1, 1),
+	(3, 250000, 210000, 31, 40, 1, 1),
+	(4, 180000, 150000, 10, 20, 1, 2),
+	(5, 230000, 200000, 21, 30, 1, 2),
+	(6, 170000, 140000, 10, 15, 1, 3),
+	(7, 210000, 190000, 16, 25, 1, 3),
+	(8, 120000, 100000, 10, 20, 1, 4),
+	(9, 190000, 170000, 21, 30, 1, 5),
+	(10, 240000, 220000, 31, 40, 1, 5);
 
 -- Volcando estructura para tabla radio_demo.tipodocumento
 CREATE TABLE IF NOT EXISTS `tipodocumento` (
@@ -710,11 +782,30 @@ INSERT INTO `tipodocumento` (`ID_TIPODOCUMENTO`, `NOMBRE_TIPODOCUMENTO`, `ESTADO
 	(2, 'Pasaporte', 1),
 	(3, 'Tarjeta de Identidad', 1);
 
+-- Volcando estructura para procedimiento radio_demo.ValidarContrasenia
+DELIMITER //
+CREATE PROCEDURE `ValidarContrasenia`(
+	IN `idVendedor` INT,
+	IN `contrasenia` VARCHAR(500)
+)
+BEGIN
+
+	SELECT
+		COUNT(1)
+	FROM
+		vendedor v
+	WHERE
+		v.ID_VENDEDOR = idVendedor
+		AND v.CONTRASENIA_VENDEDOR = SHA2(contrasenia, 256);
+	
+END//
+DELIMITER ;
+
 -- Volcando estructura para procedimiento radio_demo.ValidarVendedor
 DELIMITER //
 CREATE PROCEDURE `ValidarVendedor`(
-	IN username VARCHAR(50),
-	IN contrasenia VARCHAR(50)
+	IN `username` VARCHAR(50),
+	IN `contrasenia` VARCHAR(50)
 )
 BEGIN
 	
@@ -725,7 +816,7 @@ BEGIN
 	INNER JOIN persona ON vendedor.FK_DOCUMENTO_PERSONA = persona.DOCUMENTO_PERSONA
 	INNER JOIN rol ON vendedor.FK_ID_ROL = rol.ID_ROL
 	WHERE vendedor.USERNAME_VENDEDOR = username
-	AND vendedor.CONTRASENIA_VENDEDOR = contrasenia;
+	AND vendedor.CONTRASENIA_VENDEDOR = SHA2(contrasenia, 256);
 	
 END//
 DELIMITER ;
@@ -734,21 +825,22 @@ DELIMITER ;
 CREATE TABLE IF NOT EXISTS `vendedor` (
   `ID_VENDEDOR` int NOT NULL AUTO_INCREMENT,
   `USERNAME_VENDEDOR` varchar(50) NOT NULL,
-  `CONTRASENIA_VENDEDOR` varchar(50) NOT NULL,
+  `CONTRASENIA_VENDEDOR` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ESTADO_VENDEDOR` tinyint NOT NULL DEFAULT '1',
   `FK_DOCUMENTO_PERSONA` int NOT NULL,
   `FK_ID_ROL` int NOT NULL,
   PRIMARY KEY (`ID_VENDEDOR`),
   KEY `FK_PERSONA_VENDEDOR` (`FK_DOCUMENTO_PERSONA`),
   KEY `FK_ROL_VENDEDOR` (`FK_ID_ROL`),
-  CONSTRAINT `FK_PERSONA_VENDEDOR` FOREIGN KEY (`FK_DOCUMENTO_PERSONA`) REFERENCES `persona` (`DOCUMENTO_PERSONA`),
-  CONSTRAINT `FK_ROL_VENDEDOR` FOREIGN KEY (`FK_ID_ROL`) REFERENCES `rol` (`ID_ROL`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_PERSONA_VENDEDOR` FOREIGN KEY (`FK_DOCUMENTO_PERSONA`) REFERENCES `persona` (`DOCUMENTO_PERSONA`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_ROL_VENDEDOR` FOREIGN KEY (`FK_ID_ROL`) REFERENCES `rol` (`ID_ROL`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla radio_demo.vendedor: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla radio_demo.vendedor: ~3 rows (aproximadamente)
 INSERT INTO `vendedor` (`ID_VENDEDOR`, `USERNAME_VENDEDOR`, `CONTRASENIA_VENDEDOR`, `ESTADO_VENDEDOR`, `FK_DOCUMENTO_PERSONA`, `FK_ID_ROL`) VALUES
-	(1, 'admin', '1234', 0, 123, 1),
-	(2, 'empleado', '1234', 1, 222222, 2);
+	(1, 'admin', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 1, 123, 1),
+	(2, 'empleado', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 1, 15151515, 2),
+	(3, 'invitado', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 1, 12345678, 3);
 
 -- Volcando estructura para vista radio_demo.vistabuscarcontrato
 -- Creando tabla temporal para superar errores de dependencia de VIEW

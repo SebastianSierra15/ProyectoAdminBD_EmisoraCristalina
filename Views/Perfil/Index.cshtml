@@ -4,10 +4,32 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-center" style="margin-top: 100px;">Perfil</h1>
+@if (TempData["Mensaje"] != null || TempData["Error"] != null)
+{
+    <div id="alertContainer" class="fixed-top d-flex justify-content-center" style="margin-top: 80px; z-index: 1055;">
+        <div class="w-auto">
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                    @TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<h1 class="text-center mt-10" style="margin-top: 80px;">Perfil</h1>
 
 <div class="container text-center mt-5">
-    <form id="edit" action="@Url.Action("Editar", "Perfil")" method="post">
+    <form id="edit" action="@Url.Action("EditarPerfil", "Perfil")" method="post">
         <div class="row">
             <div class="col">
                 <input class="form-control" id="id" name="id" value="@Model.Id" hidden />
@@ -68,23 +90,55 @@
                 <input type="text" class="form-control" id="genero" name="genero" value="@Model.Persona.Genero.Nombre" readonly>
             </div>
         </div>
-
-        <div class="row mt-3 mb-3">
-            <div class="col">
-                <label for="contrasenia"><strong>Contraseña</strong></label>
-                <input type="password" class="form-control" id="contrasenia" name="contrasenia" placeholder="******" aria-describedby="passwordHelpInline" value="@Model.Contrasenia" required>
-            </div>
-
-            <div class="col">
-                <label for="contrasenia2"><strong>Confirmar contraseña</strong></label>
-                <input type="password" class="form-control" id="contrasenia2" placeholder="******" aria-describedby="passwordHelpInline" required disabled>
-            </div>
-        </div>
     </form>
 
-    <button class="btn btn-success mt-3 mb-4" form="edit" type="submit">
-        Guardar
-    </button>
+    <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+        @if (User.IsInRole("Editar Perfil"))
+        {
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalContrasenia">
+                Cambiar contraseña
+            </button>
+        }
+
+        @if (User.IsInRole("Editar Perfil"))
+        {
+            <button class="btn btn-success" form="edit" type="submit">
+                Guardar
+            </button>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modalContrasenia" tabindex="-1" aria-labelledby="modalContraseniaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" action="@Url.Action("CambiarContrasenia", "Perfil")" id="formCambioContrasenia">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalContraseniaLabel">Cambiar contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="actual" class="form-label">Contraseña actual</label>
+                        <input type="password" class="form-control" id="actual" name="contraseniaActual" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nueva" class="form-label">Nueva contraseña</label>
+                        <input type="password" class="form-control" id="nueva" name="nuevaContrasenia" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmar" class="form-label">Confirmar nueva contraseña</label>
+                        <input type="password" class="form-control" id="confirmar" name="confirmarContrasenia" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -101,26 +155,33 @@
     fecha.value = fechaFormateada;
 
     $(document).ready(function () {
-        $('#contrasenia').on('input', function () {
+        $('#formCambioContrasenia').on('submit', function (e) {
+            const nueva = $('#nueva').val();
+            const confirmar = $('#confirmar').val();
 
-            if ($(this).val().trim() !== '') {
-                $('#contrasenia2').prop('required', true);
-                $('#contrasenia2').prop('disabled', false);
-            } else {
-                $('#contrasenia2').prop('required', false);
-                $('#contrasenia2').prop('disabled', true);
-            }
-        });
-
-        $('#edit').on('submit', function (event) {
-            var contrasenia = $('#contrasenia').val();
-            var contrasenia2 = $('#contrasenia2').val();
-            // Verificar si las contraseñas coinciden
-            if (contrasenia !== contrasenia2) {
-                alert('Las contraseñas no coinciden.');
-                event.preventDefault(); // Detener el envío del formulario
+            if (nueva !== confirmar) {
+                alert("Las nuevas contraseñas no coinciden.");
+                e.preventDefault();
             }
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert-dismissible');
+
+        alerts.forEach(alert => {
+            alert.addEventListener('closed.bs.alert', function () {
+                const container = document.getElementById('alertContainer');
+                if (container) {
+                    container.remove();
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000);
+    });
 </script>

@@ -7,7 +7,9 @@
     <h1 class="mb-3">Bienvenido</h1>
     <p class="text-muted mb-4">Hola, @User.Identity.Name 👋 Bienvenido de nuevo a Radio Demo</p>
 
-    <a class="btn btn-primary btn-lg shadow-sm" href="@Url.Action("CrearContrato", "Contrato")">
+   <a class="btn btn-primary btn-lg shadow-sm"
+       href="@(User.IsInRole("Agregar Contrato") ? Url.Action("CrearContrato", "Contrato") : "#")"
+       onclick="return validarPermisoCrearContrato();">
         <i class='bx bx-plus-medical'></i> Crear Contrato
     </a>
 </div>
@@ -57,3 +59,16 @@
         </a>
     </div>
 </div>
+
+<script>
+    function validarPermisoCrearContrato() {
+        var tienePermiso = @((User.IsInRole("Agregar Contrato") ? "true" : "false"));
+
+        if (!tienePermiso) {
+            alert("No tienes permisos para crear contratos.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
